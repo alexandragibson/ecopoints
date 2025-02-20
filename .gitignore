@@ -1,0 +1,12 @@
+# IntelliJ
+.idea/
+
+# Database
+db.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+
+# Notes
+notes.md
