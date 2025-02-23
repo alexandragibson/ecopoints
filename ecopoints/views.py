@@ -7,3 +7,6 @@ def index(request):
         "test": "Hello World!"
     }
     return render(request, 'ecopoints/index.html', context=context_dict)
+
+def insights(request):
+    return render(request, 'ecopoints/insights.html')

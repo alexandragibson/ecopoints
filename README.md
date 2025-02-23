@@ -9,7 +9,5 @@
 ## Created By
 - Kimberley Bates
 - Lily Cameron
-- Alexandria Gibson
+- Alexandra Gibson
 - Geraldine Ho
-
-
