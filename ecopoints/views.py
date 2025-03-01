@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from datetime import datetime
-from .models import CompletedTask
+
+from .models import CompletedTask, Category, Task
 
 # Create your views here.
 
@@ -40,4 +41,12 @@ def insights(request):
     return render(request, 'ecopoints/insights.html', context)
 
 def dashboard(request):
-    return render(request, 'ecopoints/dashboard.html')
+    category_list = Category.objects.all()
+    task_list = Task.objects.all()
+
+    context_dict = {
+        'categories': category_list,
+        'tasks': task_list
+    }
+
+    return render(request, 'ecopoints/dashboard.html', context=context_dict)

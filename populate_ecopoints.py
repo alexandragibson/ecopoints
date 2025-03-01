@@ -36,7 +36,6 @@ else:
     print("Skipping user population - Users already exist")
 
 
-# 2. Categories population
 if not Category.objects.exists():
     with open(category_json, "r") as file:
         categories = json.load(file)
@@ -51,7 +50,6 @@ else:
     print("Skipping category population - Categories already exist")
 
 
-# 3. Tasks population
 if not Task.objects.exists():
     with open(task_json, "r") as file:
         task_data = json.load(file)

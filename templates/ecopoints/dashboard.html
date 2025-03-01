@@ -7,5 +7,26 @@
 
 {% block body_block %}
   <h1>Ecopoints Dashboard</h1>
-
+  {% if categories %}
+    {% for category in categories %}
+      <h2>
+        {{ category.name }}
+      </h2>
+        {% if tasks %}
+          <ul>
+            {% for task in tasks %}
+              {% if task.category == category %}
+                <li>
+                  {{ task.name }}
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% else %}
+          <strong>There are no tasks present.</strong>
+        {% endif %}
+    {% endfor %}
+  {% else %}
+    <strong>There are no categories present.</strong>
+  {% endif %}
 {% endblock %}
