@@ -38,3 +38,6 @@ def insights(request):
     }
 
     return render(request, 'ecopoints/insights.html', context)
+
+def dashboard(request):
+    return render(request, 'ecopoints/dashboard.html')
