@@ -1,0 +1,25 @@
+{% load staticfiles %}
+{% load ecopoints_template_tags %}
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>
+      {% block title_block %}
+        EcoPoints
+      {% endblock %}
+    </title>
+  </head>
+  <body>
+    <nav>
+      <a href="{% url 'ecopoints:insights' %}">Insights</a>
+      <a href="{% url 'ecopoints:index' %}">Dashboard</a>
+    </nav>
+    {% block body_block %}
+      <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+          <hr />
+      </div>
+    {% endblock %}
+  </body>
+</html>

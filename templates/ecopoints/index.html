@@ -1,17 +1,14 @@
-<!DOCTYPE html>
+{% extends 'ecopoints/base.html' %}
 {% load staticfiles %}
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Ecopoints</title>
-  </head>
-  <body>
-    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
-      <h1 style="font-size: 4rem">{{ test }}</h1>
-      <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
-        <hr />
-        <a href="{% url 'ecopoints:insights' %}">Insights</a>
-    </div>
-  </body>
-</html>
+{% block title_block %}
+  Ecopoints: Home
+{% endblock %}
+
+{% block body_block %}
+  <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+    <h1 style="font-size: 4rem">INDEX</h1>
+    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+    <hr />
+  </div>
+{% endblock %}

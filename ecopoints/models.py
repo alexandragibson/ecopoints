@@ -11,7 +11,7 @@ class Category(models.Model):
         return self.name
 
 class Task(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=255)
     score = models.PositiveSmallIntegerField()
