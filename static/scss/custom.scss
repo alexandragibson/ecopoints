@@ -1,11 +1,38 @@
-// Import Bootstrap functions and variables first
+
+$primary: #62a162;
+$secondary: #F278B1;
+
+// Import Bootstrap functions first.
 @import "../bootstrap/scss/functions";
 @import "../bootstrap/scss/variables";
 
-// Override primary colour
-$theme-colors: (
-        "primary": #00ff12
-);
+$link-decoration: none;
 
-// Now import Bootstrap itself
+// Now import Bootstrap’s variables and then the rest of Bootstrap.
 @import "../bootstrap/scss/bootstrap";
+
+[data-bs-theme="dark"] {
+  color-scheme: dark;
+
+  /* Body background and text */
+  --bs-body-bg: #121212;
+  --bs-body-bg-rgb: 18, 18, 18;
+  --bs-secondary-bg: #282828;
+  --bs-secondary-bg-rgb: 40, 40, 40;
+  --bs-tertiary-bg: #3F3F3F;
+  --bs-tertiary-bg-rgb: 63, 63, 63;
+
+  --bs-body-color: #e3e3e3;
+
+  /* Links */
+  --bs-link-color: #e3e3e3;
+  --bs-link-color-rgb: 227, 227, 227;
+  --bs-link-hover-color: #BBBBBB;
+  --bs-link-hover-color-rgb: 187, 187, 187;
+}
+
+.btn-primary,
+.btn-secondary {
+  color: var(--bs-body-color) !important;
+  font-weight: 500;
+}

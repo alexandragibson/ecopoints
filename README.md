@@ -2,7 +2,7 @@
 
 ## What is in environment
 - python 3.7.5
-- django 2.7.1
+- django 2.1.5
 - django-compressor 4.4 
 - django-libsass 0.9
 ```bash
