@@ -18,6 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 MEDIA_DIR = os.path.join(BASE_DIR, "media")
+STATICFILES_DIR = os.path.join(BASE_DIR, 'assets')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -121,22 +122,21 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = STATIC_DIR
+STATIC_URL = '/static/' # the URL to access the static files
+STATIC_ROOT = STATIC_DIR # where the compressed files will be stored for production
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets')]
-
+STATICFILES_DIRS = [STATICFILES_DIR] # where the static files are stored for development
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
+# Compressor settings (compresses CSS and JS files)
 COMPRESS_PRECOMPILERS = (
     ('text/scss', 'django_libsass.SassCompiler'),
 )
 COMPRESS_ROOT = STATIC_ROOT
-
 
 # Media files (uploaded by admins or users)
 MEDIA_ROOT = MEDIA_DIR
