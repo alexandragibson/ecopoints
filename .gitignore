@@ -10,3 +10,6 @@ __pycache__/
 
 # Notes
 notes.md
+
+# assets folder
+assets/*

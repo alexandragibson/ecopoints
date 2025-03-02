@@ -123,9 +123,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/' # the URL to access the static files
-STATIC_ROOT = STATIC_DIR # where the compressed files will be stored for production
+STATIC_ROOT = STATICFILES_DIR # where the compressed files will be stored for production
 
-STATICFILES_DIRS = [STATICFILES_DIR] # where the static files are stored for development
+STATICFILES_DIRS = [STATIC_DIR] # where the static files are stored for development
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
