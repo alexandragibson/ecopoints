@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os.path
 from pathlib import Path
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'compressor',
     'ecopoints',
 ]
 
@@ -122,7 +122,21 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [STATIC_DIR]
+STATIC_ROOT = STATIC_DIR
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets')]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_PRECOMPILERS = (
+    ('text/scss', 'django_libsass.SassCompiler'),
+)
+COMPRESS_ROOT = STATIC_ROOT
+
 
 # Media files (uploaded by admins or users)
 MEDIA_ROOT = MEDIA_DIR
