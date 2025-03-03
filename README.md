@@ -1,4 +1,4 @@
-# 🌱 Ecopoints
+# 🌱 ecopoints
 
 ## Features
 - User authentication
