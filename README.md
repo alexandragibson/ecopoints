@@ -1,12 +1,12 @@
 # 🌱 ecopoints
 
-## Features
+## features
 - User authentication
 - Log and track sustainable actions
 - Dashboard
 - Analytics
 
-## Created By
+## created by
 - Kimberley Bates
 - Lily Cameron
 - Alexandra Gibson
