@@ -2,13 +2,22 @@
 {% load staticfiles %}
 
 {% block title_block %}
-  Ecopoints: Home
+    Ecopoints: Home
 {% endblock %}
 
 {% block body_block %}
-  <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
-    <h1 style="font-size: 4rem">INDEX</h1>
-    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
-    <hr />
-  </div>
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <h1 style="font-size: 4rem">{{ test }}</h1>
+        <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+        <hr />
+    </div>
+    <div>
+        {% if user.is_authenticated %}
+            <strong>Welcome {{ user.username }}!</strong>
+        {% else %}
+            <strong>Welcome ecopal!</strong>
+        {% endif %}
+        <br />
+        <br />
+    </div>
 {% endblock %}

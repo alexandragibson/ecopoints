@@ -3,13 +3,14 @@ from datetime import datetime
 
 from .models import CompletedTask, Category, Task
 
-# Create your views here.
-
 def index(request):
     context_dict = {
-        "test": "Hello World!"
+        "test": "ecopoints"
     }
     return render(request, 'ecopoints/index.html', context=context_dict)
+
+def about(request):
+    return render(request, 'ecopoints/about.html')
 
 def calculate_points(user, start_date):
     tasks = CompletedTask.objects.filter(user=user, completed_at__gte=start_date)

@@ -8,7 +8,11 @@
 ```bash
 pip install django-compressor django-libsass
 ```
-
+**django-registration-redux package version in the tango book doesn't seem to compatible please install this version instead:**
+```bash
+pip install django-registration-redux==2.13
+```
+****
 
 ## Features
 - User authentication

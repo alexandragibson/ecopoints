@@ -28,3 +28,15 @@ class CompletedTask(models.Model):
 
     def __str__(self):
         return f"{self.user.username} completed {self.task.name}"
+
+class UserProfile(models.Model):
+
+    # Link a UserProfile to a User model instance:
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # Additional attribute for a profile picture:
+    picture = models.ImageField(upload_to='profile_images', blank=True)
+
+    # Return username value when a String representation of the user is needed
+    def __str__(self):
+        return self.user.username
