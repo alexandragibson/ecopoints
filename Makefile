@@ -9,3 +9,10 @@ migrate:
 
 test:
 	python manage.py test
+
+collectstatic:
+	python manage.py collectstatic
+
+
+compress:
+	python manage.py compress --force

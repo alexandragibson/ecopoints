@@ -1,0 +1,8 @@
+body {
+    /*background-color: var(--bs-primary);*/
+}
+
+
+.nav__logo {
+    max-height: 50px;
+}
