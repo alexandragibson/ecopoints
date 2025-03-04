@@ -2,54 +2,102 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    Ecopoints: Dashboard
+    Dashboard
 {% endblock %}
 
 {% block body_block %}
-    <h1>Ecopoints Dashboard</h1>
+    <h1 class="my-5">Dashboard</h1>
+    <hr />
+    <h2 class="my-3">Categories</h2>
     {% if categories %}
-        {% for category in categories %}
-            <h2>
-                {{ category.name }}
-            </h2>
-            {% if tasks %}
-                <ul>
-                    {% for task in tasks %}
-                        {% if task.category == category %}
-                            <li>
-                                {{ task.name }}
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <strong>There are no tasks present.</strong>
-            {% endif %}
-        {% endfor %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-5">
+            {% for category in categories %}
+                <div class="col">
+                    <div class="card">
+                        <img
+                            src="{{ category.banner.url }}"
+                            class="card-img-top"
+                            alt="{{ category.name }} image"
+                            style="max-height: 10rem; object-fit: cover; object-position: center;"
+                        >
+                        <div class="card-body">
+                            <p class="card-text">{{ category.name }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
         <strong>There are no categories present.</strong>
     {% endif %}
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
-    </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <hr />
+    <h2 class="my-3">Recently Completed Tasks</h2>
+    {% if recent_tasks %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-5">
+            {% for task in recent_tasks %}
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ task.name }}</h5>
+                            <h6>{{ task.category }} | {{ task.completed_at }}</h6>
+                            <p class="card-text">{{ task.description }}</p>
+                            <button
+                                class="btn btn-primary"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modal-{{ task.id }}"
+                            >
+                                Log again
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    ...
+                <!-- Modal -->
+                <div
+                    class="modal fade"
+                    id="modal-{{ task.id }}"
+                    tabindex="-1"
+                    aria-labelledby="modalLabel-{{ task.id }}"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modalLabel-{{ task.id }}">
+                                    {{ task.name }} | {{ task.score }} EP
+                                </h1>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div class="modal-body">
+                                <h4>{{ task.description }}</h4>
+                                <p>{{ task.category }}</p>
+                                <p>Have you completed this task?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-danger"
+                                    data-bs-dismiss="modal"
+                                >
+                                    Cancel
+                                </button>
+                                <form method="POST" action="{% url 'ecopoints:complete_task' task.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                                    <button type="submit" class="btn btn-primary">Complete Ecotask</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
+            {% endfor %}
         </div>
-    </div>
+    {% else %}
+        <strong>There are no recent tasks present.</strong>
+    {% endif %}
 {% endblock %}
