@@ -30,6 +30,35 @@ instead:**
 pip install django-registration-redux==2.13
 ```
 
+### Setup
+
+Setup database:
+
+```bash
+python manage.py migrate
+```
+
+populate database:
+
+```bash
+python ./populate_ecopoints.py
+```
+
+make sure to create a superuser:
+
+```bash
+python manage.py createsuperuser
+```
+
+**If there is issues with the database, delete the db.sqlite3 file and run the following commands:**
+
+```bash
+# this will delete database; use for clean restart
+rm db.sqlite3
+python manage.py migrate
+python ./populate_ecopoints.py
+```
+
 ****
 
 ## Features
