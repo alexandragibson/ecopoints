@@ -5,25 +5,20 @@ import json
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'itech_project.settings')
 django.setup()
 
-from ecopoints.models import Category, Task
+from ecopoints.models import Category, Task, CompletedTask
 from django.contrib.auth.models import User
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 user_json = os.path.join(BASE_DIR, "populate/users.json")
 category_json = os.path.join(BASE_DIR, "populate/category.json")
 task_json = os.path.join(BASE_DIR, "populate/task.json")
-completed_task_json = os.path.join(BASE_DIR, "populate/completedTask.json")
+completed_task_json = os.path.join(BASE_DIR, "populate/completed_task.json")
 
-# Clear all data - comment out if you want to keep existing data
-if User.objects.exists():
-    User.objects.all().delete()
-    print("Deleted all users")
-if Category.objects.exists():
-    Category.objects.all().delete()
-    print("Deleted all categories")
-if Task.objects.exists():
-    Task.objects.all().delete()
-    print("Deleted all tasks")
+# delete data if exists
+User.objects.all().delete()
+Category.objects.all().delete()
+Task.objects.all().delete()
+CompletedTask.objects.all().delete()
 
 if not User.objects.exists():
     with open(user_json, "r") as file:
@@ -42,8 +37,6 @@ if not User.objects.exists():
                     email=email,
                     first_name=first_name,
                     last_name=last_name,
-                    is_superuser=True,
-                    is_staff=True,
                     password="password123"
                 )
                 print(f"Created superuser: {username}")
@@ -96,14 +89,15 @@ if not Task.objects.exists():
 else:
     print("Skipping task population - Tasks already exist")
 
-if User.objects.filter(username="bonddonna"):
-    user = User.objects.get(username="bonddonna")
-    with open(completed_task_json, "r") as file:
-        completed_task_json = json.load(file)
+if not CompletedTask.objects.exists():
+    if User.objects.get(username="bonddonna"):
+        user = User.objects.get(username="bonddonna")
 
-    for completed_task in completed_task_json:
-        task = Task.objects.get(name=completed_task["task"])
+        with open(completed_task_json, "r") as file:
+            completed_tasks = json.load(file)
 
-        if task:
+        for completed_task in completed_tasks:
+            task_name = completed_task["task"]
+            task = Task.objects.get(name=task_name)
             user.completedtask_set.create(task=task)
-            print(f"Added completed task: {task}")
+            print(f"Created completed task: {task_name}")
