@@ -3,18 +3,21 @@
     "username": "bonddonna",
     "email": "copelandcurtis@brown.com",
     "first_name": "Rhonda",
-    "last_name": "Roth"
+    "last_name": "Roth",
+    "is_superuser": true
   },
   {
     "username": "evan68",
     "email": "andre19@keith.biz",
     "first_name": "Brianna",
-    "last_name": "Smith"
+    "last_name": "Smith",
+    "is_superuser": false
   },
   {
     "username": "royvictoria",
     "email": "sharon55@guerrero.com",
     "first_name": "Amy",
-    "last_name": "Jefferson"
+    "last_name": "Jefferson",
+    "is_superuser": false
   }
 ]
