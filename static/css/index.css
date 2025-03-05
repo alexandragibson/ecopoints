@@ -6,3 +6,16 @@ body {
 .nav__logo {
     max-height: 50px;
 }
+
+/* styles for Ecopoints */
+
+/* styling for lists */
+.ep-list {
+    padding: 0;
+    margin: 0;
+
+}
+
+.ep-list > li {
+    list-style-type: none;
+}

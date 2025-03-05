@@ -5,8 +5,38 @@
     Dashboard
 {% endblock %}
 
+{% block head_block %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+{% endblock %}
+
 {% block body_block %}
     <h1 class="my-5">Dashboard</h1>
+    <hr />
+    <h2 class="my-3">Today's Tasks</h2>
+    {% if completed_tasks_today %}
+        <p>Today you have completed the following tasks:</p>
+        <ul class="ep-list dashboard__list">
+            {% for task in completed_tasks_today %}
+                <li>
+                    <div class="completed-today">
+                        <span class="completed-today__counter">{{ task.counter }}</span>
+                        {{ task.name }} | {{ task.total_score }} EP
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <div>
+            <p class="text-muted text-sm-center">We recommend at least 50 EcoPoints per day to reduce your carbon
+                footprint!</p>
+            <div class="score_bar">
+                <p class="score_bar__score">{{ total_score_today }} EP / 50 EP</p>
+                <span class="score_bar__progress-bar" data-score-total="{{ total_score_today }}"
+                      aria-valuenow="{{ total_score_today }}"></span>
+            </div>
+        </div>
+    {% else %}
+        <strong>There are no tasks completed today.</strong>
+    {% endif %}
     <hr />
     <h2 class="my-3">Categories</h2>
     {% if categories %}

@@ -49,9 +49,12 @@ def insights(request):
 
 @login_required(login_url='/accounts/login/')
 def dashboard(request):
+    user = request.user
+    today = datetime.now().date()
     category_list = Category.objects.all()
     task_list = Task.objects.all()
     completed_tasks = CompletedTask.objects.filter(user=request.user).order_by('-completed_at')
+    completed_today = CompletedTask.objects.filter(user=request.user, completed_at__date=today)
 
     # Get the 5 most recent completed tasks
     # sqlLite does not support DISTINCT
@@ -68,13 +71,42 @@ def dashboard(request):
             task.completed_at = formatted_time
             unique_tasks.append(task)
             seen_task_ids.add(task_id)
+        # max 5 unique tasks
         if len(unique_tasks) == 5:
             break
+
+    completed_today_unique = []
+    seen_tasks_ids = set()
+
+    # Loop through completions for today
+    for completed in completed_today:
+        task = completed.task
+        task_id = task.id
+
+        if task_id not in seen_tasks_ids:
+            formatted_time = completed.completed_at.strftime("%d/%m/%y %H:%M")
+            task.completed_at = formatted_time
+            task.counter = 1
+            task.total_score = task.score
+
+            completed_today_unique.append(task)
+            seen_tasks_ids.add(task_id)
+        else:
+            # Task already seen, update its counter and score
+            for t in completed_today_unique:
+                if t.id == task_id:
+                    t.counter += 1
+                    t.total_score += t.score
+                    break
+
+    total_score_today = calculate_points(user, today)
 
     context_dict = {
         'categories': category_list,
         'tasks': task_list,
-        'recent_tasks': unique_tasks
+        'recent_tasks': unique_tasks,
+        'completed_tasks_today': completed_today_unique,
+        'total_score_today': total_score_today
     }
 
     return render(request, 'ecopoints/dashboard.html', context=context_dict)
