@@ -1,4 +1,4 @@
-# 🌱 Ecopoints
+# 🌱 ecopoints
 
 ## Features
 - User authentication
@@ -6,7 +6,7 @@
 - Dashboard
 - Analytics
 
-## Created By
+## Created by
 - Kimberley Bates
 - Lily Cameron
 - Alexandra Gibson
