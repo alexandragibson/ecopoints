@@ -19,14 +19,14 @@
             {% for task in completed_tasks_today %}
                 <li>
                     <button
-                        class="completed-today toast-task-button"
+                        class="task-selector toast-task-button"
                         type="button"
                         data-task-id="{{ task.id }}"
                         data-task-name="{{ task.name }}"
                         data-bs-toggle="toast"
                         data-bs-target="#logTaskToast"
                     >
-                        <span class="completed-today__counter">{{ task.counter }}</span>
+                        <span class="task-selector__counter">{{ task.counter }}</span>
                         {{ task.name }} | {{ task.total_score }} EP
                     </button>
                 </li>
@@ -55,7 +55,7 @@
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-5">
             {% for category in categories %}
                 <div class="col">
-                    <div class="card">
+                    <a class="card" href="{% url 'ecopoints:show_category' category.slug %}">
                         <img
                             src="{{ category.banner.url }}"
                             class="card-img-top"
@@ -65,7 +65,7 @@
                         <div class="card-body">
                             <p class="card-text">{{ category.name }}</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             {% endfor %}
         </div>
@@ -81,7 +81,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ task.name }}</h5>
-                            <h6>{{ task.category }} | {{ task.completed_at }}</h6>
+                            <h6>{{ task.category.name }} | {{ task.completed_at }}</h6>
                             <p class="card-text">{{ task.description }}</p>
                             <button
                                 class="btn btn-primary toast-task-button"
