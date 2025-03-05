@@ -19,3 +19,16 @@ body {
 .ep-list > li {
     list-style-type: none;
 }
+
+/* Toast container */
+
+.toast-container {
+    position: fixed;
+    z-index: 1000;
+}
+
+.toast-container--top-center {
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+}

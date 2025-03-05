@@ -18,10 +18,17 @@
         <ul class="ep-list dashboard__list">
             {% for task in completed_tasks_today %}
                 <li>
-                    <div class="completed-today">
+                    <button
+                        class="completed-today toast-task-button"
+                        type="button"
+                        data-task-id="{{ task.id }}"
+                        data-task-name="{{ task.name }}"
+                        data-bs-toggle="toast"
+                        data-bs-target="#logTaskToast"
+                    >
                         <span class="completed-today__counter">{{ task.counter }}</span>
                         {{ task.name }} | {{ task.total_score }} EP
-                    </div>
+                    </button>
                 </li>
             {% endfor %}
         </ul>
@@ -77,56 +84,15 @@
                             <h6>{{ task.category }} | {{ task.completed_at }}</h6>
                             <p class="card-text">{{ task.description }}</p>
                             <button
-                                class="btn btn-primary"
+                                class="btn btn-primary toast-task-button"
                                 type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modal-{{ task.id }}"
+                                data-task-id="{{ task.id }}"
+                                data-task-name="{{ task.name }}"
+                                data-bs-toggle="toast"
+                                data-bs-target="#logTaskToast"
                             >
                                 Log again
                             </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal -->
-                <div
-                    class="modal fade"
-                    id="modal-{{ task.id }}"
-                    tabindex="-1"
-                    aria-labelledby="modalLabel-{{ task.id }}"
-                    aria-hidden="true"
-                >
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="modalLabel-{{ task.id }}">
-                                    {{ task.name }} | {{ task.score }} EP
-                                </h1>
-                                <button
-                                    type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close"
-                                ></button>
-                            </div>
-                            <div class="modal-body">
-                                <h4>{{ task.description }}</h4>
-                                <p>{{ task.category }}</p>
-                                <p>Have you completed this task?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button
-                                    type="button"
-                                    class="btn btn-danger"
-                                    data-bs-dismiss="modal"
-                                >
-                                    Cancel
-                                </button>
-                                <form method="POST" action="{% url 'ecopoints:complete_task' task.id %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="task_id" value="{{ task.id }}">
-                                    <button type="submit" class="btn btn-primary">Complete Ecotask</button>
-                                </form>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -135,4 +101,22 @@
     {% else %}
         <strong>There are no recent tasks present.</strong>
     {% endif %}
+    <div class="toast-container toast-container--top-center">
+        <div id="logTaskToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+                <p>Log <span id="toast-task-name"></span> again?</p>
+                <div class="mt-2 pt-2 border-top">
+                    <form id="logTaskForm" method="POST" action="">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="toast">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Confirm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_block %}
+    <script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
