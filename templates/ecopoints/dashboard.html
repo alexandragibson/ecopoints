@@ -5,17 +5,13 @@
     Dashboard
 {% endblock %}
 
-{% block head_block %}
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
-{% endblock %}
-
 {% block body_block %}
     <h1 class="my-5">Dashboard</h1>
     <hr />
     <h2 class="my-3">Today's Tasks</h2>
     {% if completed_tasks_today %}
         <p>Today you have completed the following tasks:</p>
-        <ul class="ep-list dashboard__list">
+        <ul class="ep-list row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
             {% for task in completed_tasks_today %}
                 <li>
                     <button

@@ -1,5 +1,0 @@
-.dashboard__list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(17.1875rem, 1fr));
-    gap: 1rem;
-}
