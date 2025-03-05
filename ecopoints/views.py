@@ -101,12 +101,17 @@ def dashboard(request):
 
     total_score_today = calculate_points(user, today)
 
+    finished = False
+    if total_score_today >= 50:
+        finished = True
+
     context_dict = {
         'categories': category_list,
         'tasks': task_list,
         'recent_tasks': unique_tasks,
         'completed_tasks_today': completed_today_unique,
-        'total_score_today': total_score_today
+        'total_score_today': total_score_today,
+        'finished': finished
     }
 
     return render(request, 'ecopoints/dashboard.html', context=context_dict)

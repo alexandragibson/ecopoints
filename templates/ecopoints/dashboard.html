@@ -25,18 +25,23 @@
                 </li>
             {% endfor %}
         </ul>
-        <div>
-            <p class="text-muted text-sm-center">We recommend at least 50 EcoPoints per day to reduce your carbon
-                footprint!</p>
-            <div class="score_bar">
-                <p class="score_bar__score">{{ total_score_today }} EP / 50 EP</p>
-                <span class="score_bar__progress-bar" data-score-total="{{ total_score_today }}"
-                      aria-valuenow="{{ total_score_today }}"></span>
-            </div>
-        </div>
     {% else %}
         <strong>There are no tasks completed today.</strong>
     {% endif %}
+    <div class="mt-5">
+        <p class="text-muted text-sm-center">We recommend at least 50 EcoPoints per day to reduce your carbon
+            footprint!</p>
+        <div class="score_bar">
+            {% if finished %}
+                <p class="score_bar__score">Well done! Total: {{ total_score_today }}
+                    EP</p>
+            {% else %}
+                <p class="score_bar__score">{{ total_score_today }} EP / 50 EP</p>
+            {% endif %}
+            <span class="score_bar__progress-bar" data-score-total="{{ total_score_today }}"
+                  aria-valuenow="{{ total_score_today }}"></span>
+        </div>
+    </div>
     <hr />
     <h2 class="my-3">Categories</h2>
     {% if categories %}
