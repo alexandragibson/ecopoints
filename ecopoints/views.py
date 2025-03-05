@@ -117,6 +117,21 @@ def dashboard(request):
     return render(request, 'ecopoints/dashboard.html', context=context_dict)
 
 
+def show_category(request, category_slug):
+    try:
+        category = Category.objects.get(slug=category_slug)
+        tasks = Task.objects.filter(category=category)
+    except Category.DoesNotExist:
+        category = None
+        tasks = None
+
+    context_dict = {
+        'category': category,
+        'tasks': tasks
+    }
+    return render(request, 'ecopoints/category.html', context=context_dict)
+
+
 @login_required
 def complete_task(request, task_id):
     if request.method == 'POST':
