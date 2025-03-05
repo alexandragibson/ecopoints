@@ -87,7 +87,6 @@ def dashboard(request):
             formatted_time = completed.completed_at.strftime("%d/%m/%y %H:%M")
             task.completed_at = formatted_time
             task.counter = 1
-            task.total_score = task.score
 
             completed_today_unique.append(task)
             seen_tasks_ids.add(task_id)
@@ -96,7 +95,6 @@ def dashboard(request):
             for t in completed_today_unique:
                 if t.id == task_id:
                     t.counter += 1
-                    t.total_score += t.score
                     break
 
     total_score_today = calculate_points(user, today)
