@@ -16,7 +16,7 @@ Based on the assumption anaconda is being used -
 **To install the required packages, run the following commands:**
 
 ```bash
-conda install python=3.7.5 django=2.1.5 
+conda create --name {ENVNAME} python=3.7.5 django=2.1.5 
 ```
 
 ```bash
