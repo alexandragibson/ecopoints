@@ -2,22 +2,22 @@
 {% load staticfiles %}
 
 {% block title_block %}
-home
+    Home
 {% endblock %}
 
 {% block body_block %}
-  <h1 style="font-size: 4rem">{{ test }}</h1>
-  <div>
-    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints Logo" />
-  </div>
-  <div>
-      {% if user.is_authenticated %}
-      <strong>Welcome {{ user.username }}!</strong>
-      {% else %}
-          <strong>Welcome ecopal!</strong>
-      {% endif %}
-      <br />
-      <br />
-  </div>
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <h1 style="font-size: 4rem">{{ test }}</h1>
+        <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+        <hr />
+    </div>
+    <div>
+        {% if user.is_authenticated %}
+            <strong>Welcome {{ user.username }}!</strong>
+        {% else %}
+            <strong>Welcome ecopal!</strong>
+        {% endif %}
+        <br />
+        <br />
+    </div>
 {% endblock %}
-

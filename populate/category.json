@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Energy Usage",
+    "banner": "/category_banners/energy_usage.jpg"
+  },
+  {
+    "name": "Waste Management",
+    "banner": "/category_banners/waste_management.jpg"
+  },
+  {
+    "name": "Water Conservation",
+    "banner": "/category_banners/water_conservation.jpg"
+  },
+  {
+    "name": "Transportation",
+    "banner": "/category_banners/transportation.jpg"
+  },
+  {
+    "name": "Food Choices",
+    "banner": "/category_banners/food_choices.jpg"
+  },
+  {
+    "name": "Shopping Habits",
+    "banner": "/category_banners/shopping_habits.jpg"
+  }
+]

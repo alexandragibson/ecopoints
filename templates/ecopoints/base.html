@@ -1,39 +1,78 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load ecopoints_template_tags %}
 
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            ecopoints -
+            Ecopoints -
             {% block title_block %}
             {% endblock %}
         </title>
-    </head>
-    <body>
-        <div>
-        {% block body_block %}
+        {% load compress %}
+        {% compress css %}
+            <link rel="stylesheet" type="text/scss" href="{% static '/scss/custom.scss' %}">
+        {% endcompress %}
+        <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/components/index.css' %}" />
+        {% block head_block %}
         {% endblock %}
+    </head>
+    <body data-bs-theme="dark">
+        <nav class="navbar bg-body-secondary">
+            <div class="container container-fluid">
+                <div>
+                    <a class="navbar-brand me-5">
+                        <img class="nav__logo" src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+                    </a>
+                    <a href="{% url 'ecopoints:insights' %}" class="me-3">Insights</a>
+                    <a href="{% url 'ecopoints:dashboard' %}">Dashboard</a>
+                </div>
+                {% if user.is_authenticated %}
+                    <button class="btn btn-primary d-flex" type="button">Logout</button>
+                {% else %}
+                    <button class="btn btn-primary d-flex" type="button">Login</button>
+                {% endif %}
+            </div>
+        </nav>
+        <div class="container">
+            {% block body_block %}
+                <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+                    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+                    <hr />
+                </div>
+            {% endblock %}
         </div>
         <div>
-        {% block sidebar_block %}
-        {% endblock %}
+            {% block sidebar_block %}
+            {% endblock %}
         </div>
         <hr />
         <div>
             <ul>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'ecopoints:insights' %}">Insights</a></li>
-                <li><a href="{% url 'auth_logout' %}?next={% url 'ecopoints:index' %}">Logout</a></li>
-             {% else %}
-                <!---show when not logged in-->
-                <li><a href="{% url 'registration_register' %}">Register</a></li>
-                <li><a href="{% url 'auth_login' %}">Login</a></li>
-            {% endif %}
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'ecopoints:insights' %}">Insights</a></li>
+                    <li><a href="{% url 'auth_logout' %}?next={% url 'ecopoints:index' %}">Logout</a></li>
+                {% else %}
+                    <!---show when not logged in-->
+                    <li><a href="{% url 'registration_register' %}">Register</a></li>
+                    <li><a href="{% url 'auth_login' %}">Login</a></li>
+                {% endif %}
                 <!--always show-->
                 <li><a href="{% url 'ecopoints:index' %}">Home</a></li>
                 <li><a href="{% url 'ecopoints:about' %}">About</a></li>
             </ul>
         </div>
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+    <script type="module" src="{% static 'js/components/index.js' %}"></script>
+    {% block scripts_block %}
+    {% endblock %}
 </html>
