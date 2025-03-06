@@ -9,3 +9,13 @@ migrate:
 
 test:
 	python manage.py test
+
+collectstatic:
+	python manage.py collectstatic
+
+
+compress:
+	python manage.py compress --force
+
+populate:
+	python manage.py populate_ecopoints.py

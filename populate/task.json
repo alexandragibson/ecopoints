@@ -1,0 +1,136 @@
+{
+  "tasks": [
+    {
+      "name": "Air dried laundry",
+      "description": "Hung clothes to dry instead of using a dryer",
+      "score": 5,
+      "category": "Energy Usage"
+    },
+    {
+      "name": "Reduced heating or cooling",
+      "description": "Only heated or cooled room for a short period",
+      "score": 8,
+      "category": "Energy Usage"
+    },
+    {
+      "name": "Unplugged unused electronics",
+      "description": "Avoided phantom power usage",
+      "score": 3,
+      "category": "Energy Usage"
+    },
+    {
+      "name": "Used natural light",
+      "description": "Relied on daylight instead of artificial light",
+      "score": 3,
+      "category": "Energy Usage"
+    },
+    {
+      "name": "Separated recyclables",
+      "description": "Sorted waste into recyclables and non-recyclables",
+      "score": 8,
+      "category": "Waste Management"
+    },
+    {
+      "name": "Composted food scraps",
+      "description": "Started a compost bin at home",
+      "score": 10,
+      "category": "Waste Management"
+    },
+    {
+      "name": "Repaired an item",
+      "description": "Fixed a broken item instead of buying a new one",
+      "score": 8,
+      "category": "Waste Management"
+    },
+    {
+      "name": "Took a short shower",
+      "description": "Took a shower under 5 minutes",
+      "score": 5,
+      "category": "Water Conservation"
+    },
+    {
+      "name": "Fixed leaks",
+      "description": "Repaired dripping taps or pipes",
+      "score": 10,
+      "category": "Water Conservation"
+    },
+    {
+      "name": "Collected rainwater",
+      "description": "Used rainwater for plants or cleaning",
+      "score": 10,
+      "category": "Water Conservation"
+    },
+    {
+      "name": "Turned off tap while brushing",
+      "description": "Didn’t leave water running when not needed",
+      "score": 2,
+      "category": "Water Conservation"
+    },
+    {
+      "name": "Used public transport",
+      "description": "Took the bus, train, or tram instead of driving",
+      "score": 10,
+      "category": "Transportation"
+    },
+    {
+      "name": "Walked or cycled short trips",
+      "description": "Avoided car use for nearby errands",
+      "score": 8,
+      "category": "Transportation"
+    },
+    {
+      "name": "Carpooled with others",
+      "description": "Shared rides to reduce emissions",
+      "score": 5,
+      "category": "Transportation"
+    },
+    {
+      "name": "Ate plant-based meals",
+      "description": "Chose vegetarian or vegan meals",
+      "score": 6,
+      "category": "Food Choices"
+    },
+    {
+      "name": "Bought local produce",
+      "description": "Supported nearby farms to cut transport emissions",
+      "score": 6,
+      "category": "Food Choices"
+    },
+    {
+      "name": "Reduced food waste",
+      "description": "Planned meals to use up leftovers",
+      "score": 8,
+      "category": "Food Choices"
+    },
+    {
+      "name": "Chose organic food",
+      "description": "Prioritised organic and sustainably farmed food",
+      "score": 5,
+      "category": "Food Choices"
+    },
+    {
+      "name": "Bought secondhand",
+      "description": "Shopped at thrift stores or reuse platforms",
+      "score": 10,
+      "category": "Shopping Habits"
+    },
+    {
+      "name": "Supported ethical brands",
+      "description": "Bought from brands with eco-certifications",
+      "score": 10,
+      "category": "Shopping Habits"
+    },
+    {
+      "name": "Brought reusable bags",
+      "description": "Used your own bags for shopping",
+      "score": 3,
+      "category": "Shopping Habits"
+    },
+    {
+      "name": "Borrowed instead of bought",
+      "description": "Borrowed tools, books, and gear when possible",
+      "score": 5,
+      "category": "Shopping Habits"
+    }
+  ]
+}

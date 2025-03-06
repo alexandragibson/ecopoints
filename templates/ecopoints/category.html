@@ -1,0 +1,57 @@
+{% extends 'ecopoints/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    {% if category %}
+        {{ category.name }}
+    {% else %}
+        Cannot find category
+    {% endif %}
+{% endblock %}
+
+{% block body_block %}
+    {% if category %}
+        <img src="{{ category.banner.url }}" alt="{{ category.name }}"
+             style="max-height: 400px; width: 100%; object-fit: cover" />
+        <h1>{{ category.name }}</h1>
+        <p>{{ category.description }}</p>
+
+        <h2>Tasks</h2>
+        {% if tasks %}
+            <ul class="ep-list row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+                {% for task in tasks %}
+                    <li>
+                        <button
+                            class="task-selector toast-task-button"
+                            type="button"
+                            data-task-id="{{ task.id }}"
+                            data-task-name="{{ task.name }}"
+                            data-bs-toggle="toast"
+                            data-bs-target="#logTaskToast"
+                        >
+                            {{ task.name }} | {{ task.score }} EP
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tasks available</p>
+        {% endif %}
+    {% else %}
+        <p>Cannot find category</p>
+    {% endif %}
+    <div class="toast-container toast-container--top-center">
+        <div id="logTaskToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+                <p>Log <span id="toast-task-name"></span></p>
+                <div class="mt-2 pt-2 border-top">
+                    <form id="logTaskForm" method="POST" action="">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="toast">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Confirm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
