@@ -16,3 +16,6 @@ collectstatic:
 
 compress:
 	python manage.py compress --force
+
+populate:
+	python manage.py populate_ecopoints.py

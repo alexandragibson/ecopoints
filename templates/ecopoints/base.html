@@ -5,17 +5,20 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            ecopoints -
+            Ecopoints -
             {% block title_block %}
             {% endblock %}
         </title>
         {% load compress %}
         {% compress css %}
-
             <link rel="stylesheet" type="text/scss" href="{% static '/scss/custom.scss' %}">
         {% endcompress %}
         <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/components/index.css' %}" />
+        {% block head_block %}
+        {% endblock %}
     </head>
     <body data-bs-theme="dark">
         <nav class="navbar bg-body-secondary">
@@ -27,7 +30,11 @@
                     <a href="{% url 'ecopoints:insights' %}" class="me-3">Insights</a>
                     <a href="{% url 'ecopoints:dashboard' %}">Dashboard</a>
                 </div>
-                <button class="btn btn-primary d-flex" type="button">Search</button>
+                {% if user.is_authenticated %}
+                    <button class="btn btn-primary d-flex" type="button">Logout</button>
+                {% else %}
+                    <button class="btn btn-primary d-flex" type="button">Login</button>
+                {% endif %}
             </div>
         </nav>
         <div class="container">
@@ -59,4 +66,13 @@
             </ul>
         </div>
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+    <script type="module" src="{% static 'js/components/index.js' %}"></script>
+    {% block scripts_block %}
+    {% endblock %}
 </html>

@@ -31,11 +31,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Allow access to the Django admin site from phone during development
+# ALLOWED_HOSTS = [
+# put or device IP address here
+#     "0.0.0.0"
+# ]
+
 # Registration app variables
-REGISTRATION_OPEN = True # True indicates users can register.
-REGISTRATION_AUTO_LOGIN = True # True means user will be logged in automatically after registering.
-LOGIN_REDIRECT_URL = 'ecopoints:index' # URL that users will be redirected to after login.
-LOGIN_URL = 'auth_login' # URL users are directed to when not logged in
+REGISTRATION_OPEN = True  # True indicates users can register.
+REGISTRATION_AUTO_LOGIN = True  # True means user will be logged in automatically after registering.
+LOGIN_REDIRECT_URL = 'ecopoints:index'  # URL that users will be redirected to after login.
+LOGIN_URL = 'auth_login'  # URL users are directed to when not logged in
 
 # Application definition
 
@@ -48,7 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'compressor',
     'ecopoints',
-    'registration', #For using the registration app from django-registration-redux package
+    'registration',  # For using the registration app from django-registration-redux package
 ]
 
 MIDDLEWARE = [
@@ -82,7 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'itech_project.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -93,7 +98,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -103,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS':  { 'min_length': 6, } #LC: minimum password length added (6 characters)
+        'OPTIONS': {'min_length': 6, }  # LC: minimum password length added (6 characters)
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -112,7 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -127,12 +130,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/' # the URL to access the static files
-STATIC_ROOT = STATICFILES_DIR # where the compressed files will be stored for production
+STATIC_URL = '/static/'  # the URL to access the static files
+STATIC_ROOT = STATICFILES_DIR  # where the compressed files will be stored for production
 
-STATICFILES_DIRS = [STATIC_DIR] # where the static files are stored for development
+STATICFILES_DIRS = [STATIC_DIR]  # where the static files are stored for development
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
