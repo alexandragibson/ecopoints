@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Ecopoints -
+            ecopoints -
             {% block title_block %}
             {% endblock %}
         </title>
@@ -25,7 +25,7 @@
             <div class="container container-fluid">
                 <div>
                     <a class="navbar-brand me-5">
-                        <img class="nav__logo" src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+                        <img class="nav__logo" src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints logo" />
                     </a>
                     <a href="{% url 'ecopoints:insights' %}" class="me-3">Insights</a>
                     <a href="{% url 'ecopoints:dashboard' %}">Dashboard</a>
@@ -40,7 +40,7 @@
         <div class="container">
             {% block body_block %}
                 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
-                    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+                    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints logo" />
                     <hr />
                 </div>
             {% endblock %}
@@ -61,8 +61,7 @@
                     <li><a href="{% url 'auth_login' %}">Login</a></li>
                 {% endif %}
                 <!--always show-->
-                <li><a href="{% url 'ecopoints:index' %}">Home</a></li>
-                <li><a href="{% url 'ecopoints:about' %}">About</a></li>
+                <li><a href="{% url 'ecopoints:about' %}">Home</a></li>
             </ul>
         </div>
     </body>
