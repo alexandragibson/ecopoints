@@ -2,22 +2,57 @@
 {% load staticfiles %}
 
 {% block title_block %}
-home
+    about
 {% endblock %}
 
 {% block body_block %}
-  <h1 style="font-size: 4rem">{{ test }}</h1>
-  <div>
-    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints Logo" />
-  </div>
-  <div>
-      {% if user.is_authenticated %}
-      <strong>Welcome {{ user.username }}!</strong>
-      {% else %}
-          <strong>Welcome ecopal!</strong>
-      {% endif %}
-      <br />
-      <br />
-  </div>
-{% endblock %}
+    <div>
+        {% if user.is_authenticated %}
+            <h1>Welcome back {{ user.username }}!</h1>
+        {% else %}
+            <h1>Welcome to ecopoints!</h1>
+        {% endif %}
+    </div>
+    <div>
+        At ecopoints, our mission is to provide a fun and simple way to make your everyday life more sustainable!
 
+        Whether you're just starting your eco-friendly journey or you're already a sustainability pro, 
+        Ecopoints helps you track your green actions and see the difference you're making.
+
+        Every time you log a sustainable action, whether it's biking to work, reducing food waste, or using a reusable cup, you earn Ecopoints! 
+        Your Dashboard keeps track of your progress, helping you build eco-friendly habits while seeing your progress over time.
+    </div>
+
+    <div>
+        <h2>How It Works</h2>
+        <p>Every time you take a sustainable action—like recycling, using public transport, or reducing food waste—you log it in Ecopoints. Each action earns you <strong>Ecopoints</strong>, helping you build eco-friendly habits while seeing your progress over time.</p>
+    </div>
+
+    <div>
+        <h2>What You’ll Find</h2>
+        <div>
+            <h3>A Personalized Dashboard</h3>
+            <p>Quickly log actions within our sustainability categories to earn points.</p>
+        </div>
+        <div>
+            <h3>Insights & Trends</h3>
+            <p>See your sustainability impact with daily, weekly, and monthly summaries.</p>
+        </div>
+        <div>
+            <h3>Motivation & Growth</h3>
+            <p>Watch your ecopoints grow as you develop a new greener lifestyle!</p>
+        </div>
+    </div>
+
+    <div>
+        <h2>Why Ecopoints?</h2>
+        <p>We know that making sustainable choices can sometimes feel overwhelming. That’s why we’ve created a simple, 
+            rewarding system that turns everyday actions into meaningful change. 
+            By tracking your actions, we hope you stay motivated and inspired to keep making a difference.</p>
+        <p>Start small, track your progress, and join a growing movement of people making the world a greener place—one Ecopoint at a time!</p>
+    </div>
+
+    <div>
+        <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints Logo" />
+    </div>
+{% endblock %}

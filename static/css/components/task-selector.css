@@ -1,0 +1,31 @@
+.task-selector {
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    position: relative;
+    border-radius: 0.625em;
+    padding: 1em 1.5em;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.task-selector__counter {
+    --indicator-size: 1.5em;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    background: var(--bs-secondary);
+    color: var(--bs-white);
+    border-radius: 100px;
+    font-size: 0.8rem;
+
+    width: var(--indicator-size);
+    height: var(--indicator-size);
+    text-align: center;
+    line-height: var(--indicator-size);
+}

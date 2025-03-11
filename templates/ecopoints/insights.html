@@ -2,16 +2,19 @@
 {% load staticfiles %}
 
 {% block title_block %}
-insights
+    insights
 {% endblock %}
-
 {% block body_block %}
-<div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
-    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints Logo" />
-    <p><strong>Insights page coming soon</strong></p>
-</div>
+    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+    {% if is_authenticated %}
+        <h2>Daily Summary</h2>
+        <p>You have earned <strong>{{ daily_points }}</strong> ecopoints today.</p>
+        <h2>Weekly Summary</h2>
+        <p>You have earned <strong>{{ weekly_points }}</strong> ecopoints this week.</p>
+        <h2>Monthly Summary</h2>
+        <p>You have earned <strong> {{ monthly_points }}</strong> ecopoints this month.</p>
+    {% else %}
+        <p>You are not logged in. Log in to see your insights.</p>
+    {% endif %}
+    <a href="{% url 'index' %}">Back to Home</a>
 {% endblock %}
-
-
-
-
