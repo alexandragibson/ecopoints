@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from ecopoints import views
 
 urlpatterns = [
-                  path('', views.about, name='index'),
+                  path('', views.index, name='index'),
                   path('admin/', admin.site.urls),
                   path('ecopoints/', include('ecopoints.urls')),
                   path('accounts/', include('registration.backends.simple.urls')),  # django-registration-redux links

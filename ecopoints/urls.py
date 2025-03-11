@@ -4,7 +4,7 @@ from ecopoints import views
 app_name = 'ecopoints'
 
 urlpatterns = [
-    path('', views.about, name='index'),
+    path('', views.index, name='index'),
     path('insights/', views.insights, name='insights'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('category/<slug:category_slug>/', views.show_category, name='show_category'),
