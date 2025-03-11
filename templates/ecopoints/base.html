@@ -64,7 +64,9 @@
                 <li><a href="{% url 'ecopoints:index' %}">Home</a></li>
             </ul>
         </div>
-    <script src ="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"
+            crossorigin="anonymous"></script>
+    <script src="{% static 'js/ecopoints-jquery.js' %}"
             crossorigin="anonymous"></script>
     </body>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
