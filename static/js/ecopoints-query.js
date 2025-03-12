@@ -1,6 +1,6 @@
 //$(document).ready(function()) {
 
-    hover_colour = '#85b683';
+    hover_colour = '#62a162';
 
     $('a').hover(
         function() {
