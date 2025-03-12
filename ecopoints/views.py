@@ -1,26 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from datetime import datetime
-
 from .models import CompletedTask, Category, Task
-
+from django.http import HttpResponse
+from django.views import View
 
 def index(request):
-    context_dict = {
-        "test": "ecopoints"
-    }
-    return render(request, 'ecopoints/index.html', context=context_dict)
 
-
-def about(request):
-    return render(request, 'ecopoints/about.html')
+    return render(request, 'ecopoints/index.html')
 
 
 def calculate_points(user, start_date):
     tasks = CompletedTask.objects.filter(user=user, completed_at__gte=start_date)
     return sum(task.task.score for task in tasks)
 
-
+@login_required
 def insights(request):
     user = request.user
     today = datetime.now().date()
@@ -128,6 +122,20 @@ def show_category(request, category_slug):
         'tasks': tasks
     }
     return render(request, 'ecopoints/category.html', context=context_dict)
+
+
+class LikeCategoryView(View):
+    def get(self, request):
+        category_id = request.GET['category_id']
+        try:
+            category = Category.objects.get(id=int(category_id))
+        except Category.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+        category.liked = category.liked + 1
+        category.save()
+        return HttpResponse(category.liked)
 
 
 @login_required

@@ -10,6 +10,7 @@ class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     banner = models.ImageField(upload_to='category_images', blank=False)
     slug = models.SlugField(unique=True)
+    liked = models.IntegerField(default=0)
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -41,11 +42,12 @@ class CompletedTask(models.Model):
 
 
 class UserProfile(models.Model):
+
     # Link a UserProfile to a User model instance:
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Timestamp for account creation
-    created = models.DateTimeField(auto_now_add=True)
+    #created = models.DateTimeField(auto_now_add=True, default=True)
 
     # Additional attribute for a profile picture:
     picture = models.ImageField(upload_to='profile_images', blank=True)
