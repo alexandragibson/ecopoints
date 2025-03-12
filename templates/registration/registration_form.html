@@ -2,17 +2,57 @@
 {% load staticfiles %}
 
 {% block title_block %}
-register
+Register
 {% endblock %}
 
 {% block body_block %}
-<h1>Register</h1>
 
-<form method="post" action=".">
-    {% csrf_token %}
+    <div class="container">
+        <div class="row">
+            <div class="col d-flex justify-content-center align-items-center" style="height: 100vh;">
+                <div style="width: 300px; height: auto;">
+                    <h1 class="text-center mb-4" style="color: var(--bs-primary);">Register</h1>
+                    <div class="form-group" >
+                    <form role="form" method="post" action=".">
+                        {% csrf_token %}
+                        <div class="form-group">
+                        <p class="required"><label class="required" for="id_username" style="color: var(--bs-secondary);">
+                            Username:</label>
+                        <input class="form-control" id="id_username" maxlength="30"
+                            name="username" type="text"/>
+                        <span class="helptext">
+                            Required. 30 characters or fewer.
+                            Letters, digits and @/./+/-/_ only.
+                        </span>
+                        </p>
+                        <p class="required"><label class="required" for="id_email" style="color: var(--bs-secondary);">
+                            E-mail:</label>
+                        <input class="form-control" id="id_email" name="email"
+                            type="email" />
+                        </p>
+                        <p class="required"><label class="required" for="id_password1" style="color: var(--bs-secondary);">
+                            Password:</label>
+                        <input class="form-control" id="id_password1" name="password1"
+                            type="password" />
+                        </p>
+                        <p class="required">
+                        <label class="required" for="id_password2" style="color: var(--bs-secondary);">
+                            Password confirmation:</label>
+                        <input class="form-control" id="id_password2" name="password2"
+                            type="password" />
+                        <span class="helptext">
+                            Enter the same password as before, for verification.
+                        </span>
+                        </p>
+                        </div>
+                        </form>
+                        <div class="d-grid gap-2 col-6 mx-auto">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    {{ form.as_p }}
-
-    <input type="submit" value="Register" />
-</form>
 {% endblock %}
