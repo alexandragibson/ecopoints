@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from datetime import datetime
-
 from .models import CompletedTask, Category, Task
-
+from django.http import HttpResponse
+from django.views import View
 
 def index(request):
 
@@ -122,6 +122,20 @@ def show_category(request, category_slug):
         'tasks': tasks
     }
     return render(request, 'ecopoints/category.html', context=context_dict)
+
+
+class LikeCategoryView(View):
+    def get(self, request):
+        category_id = request.GET['category_id']
+        try:
+            category = Category.objects.get(id=int(category_id))
+        except Category.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+        category.liked = category.liked + 1
+        category.save()
+        return HttpResponse(category.liked)
 
 
 @login_required
