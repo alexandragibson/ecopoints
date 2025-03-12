@@ -30,6 +30,10 @@ instead:**
 pip install django-registration-redux==2.13
 ```
 
+```bash
+pip install django-feather
+```
+
 ### Setup
 
 Setup database:
