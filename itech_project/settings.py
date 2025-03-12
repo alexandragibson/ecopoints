@@ -16,7 +16,7 @@ from pathlib import Path
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
-STATIC_DIR = os.path.join(BASE_DIR, "static")
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
 MEDIA_DIR = os.path.join(BASE_DIR, "media")
 STATICFILES_DIR = os.path.join(BASE_DIR, 'assets')
 
@@ -134,7 +134,7 @@ USE_TZ = True
 STATIC_URL = '/static/'  # the URL to access the static files
 STATIC_ROOT = STATICFILES_DIR  # where the compressed files will be stored for production
 
-STATICFILES_DIRS = [STATIC_DIR]  # where the static files are stored for development
+STATICFILES_DIRS = [STATIC_DIR,]  # where the static files are stored for development
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
