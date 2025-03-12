@@ -2,12 +2,16 @@
 {% load static %}
 
 {% block title_block %}
-    About
+    Home
 {% endblock %}
 
 {% block body_block %}
 <div class="container py-5">
+    {% if user.is_authenticated %}
+    <h1 class="text-center mb-4" style="color: var(--bs-primary);">Welcome back {{ user.username }}!</h1>
+    {% else %}
     <h1 class="text-center mb-4" style="color: var(--bs-primary);">Welcome to ecopoints!</h1>
+    {% endif %}
 
     <div class="text-center mb-4">
         <p class="lead">

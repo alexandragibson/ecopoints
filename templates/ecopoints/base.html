@@ -37,9 +37,6 @@
                             <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'ecopoints:index' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'ecopoints:about' %}">About</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'insights' %}active{% endif %}" href="{% url 'ecopoints:insights' %}">Insights</a>
                         </li>
                         <li class="nav-item">
