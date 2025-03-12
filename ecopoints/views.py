@@ -14,7 +14,7 @@ def calculate_points(user, start_date):
     tasks = CompletedTask.objects.filter(user=user, completed_at__gte=start_date)
     return sum(task.task.score for task in tasks)
 
-
+@login_required
 def insights(request):
     user = request.user
     today = datetime.now().date()
