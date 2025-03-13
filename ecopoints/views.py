@@ -1,26 +1,26 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 from django.shortcuts import render, redirect
 from datetime import datetime
-
+from django.db.models.functions import ExtractMonth, ExtractDay
+from django.http import JsonResponse
 from .models import CompletedTask, Category, Task
+from django.http import HttpResponse
+from django.views import View
 
 
 def index(request):
-    context_dict = {
-        "test": "ecopoints"
-    }
-    return render(request, 'ecopoints/index.html', context=context_dict)
-
-
-def about(request):
-    return render(request, 'ecopoints/about.html')
+    return render(request, 'ecopoints/index.html')
 
 
 def calculate_points(user, start_date):
-    tasks = CompletedTask.objects.filter(user=user, completed_at__gte=start_date)
-    return sum(task.task.score for task in tasks)
+    return (
+            CompletedTask.objects.filter(user=user, completed_at__gte=start_date)
+            .aggregate(total=Sum('task__score'))['total']
+            or 0
+    )
 
-
+@login_required
 def insights(request):
     user = request.user
     today = datetime.now().date()
@@ -29,23 +29,87 @@ def insights(request):
     # weekday() returns 0 for Mon and 6 for Sun
     start_of_week = today.replace(day=today.day - today.weekday())
     start_of_month = today.replace(day=1)
+    start_of_year = today.replace(month=1, day=1)
 
     if user.is_authenticated:
         daily_points = calculate_points(user, today)
         weekly_points = calculate_points(user, start_of_week)
         monthly_points = calculate_points(user, start_of_month)
+
+        monthly_points_data = (
+            CompletedTask.objects.filter(user=user, completed_at__gte=start_of_year)
+            .annotate(month=ExtractMonth('completed_at'))
+            .values('month')
+            .annotate(total_points=Sum('task__score'))
+            .order_by('month')
+        )
+
+        annual_points = [
+            {"month": entry["month"], "points": entry["total_points"]}
+            for entry in monthly_points_data
+        ]
+
+        latest_month = (
+            CompletedTask.objects.filter(user=user)
+            .annotate(month=ExtractMonth('completed_at'))
+            .values_list('month', flat=True)
+            .order_by('-month')
+            .first()
+        )
+
+        if latest_month:
+            bubble_plot_data = (
+                CompletedTask.objects.filter(user=user, completed_at__month=latest_month)
+                .annotate(day=ExtractDay('completed_at'))  # Extract day instead of month
+                .values('day', 'task__category__name')  # Group by day & category
+                .annotate(total_points=Sum('task__score'))  # Sum points per category per day
+                .order_by('day', 'task__category__name')
+            )
+
+            bubble_data = [
+                {"day": entry["day"], "category": entry["task__category__name"], "points": entry["total_points"]}
+                for entry in bubble_plot_data
+            ]
+        else:
+            bubble_data = []
+
     else:
         daily_points = weekly_points = monthly_points = 0
+        annual_points = []
 
     context = {
         'daily_points': daily_points,
         'weekly_points': weekly_points,
         'monthly_points': monthly_points,
+        'annual_points': annual_points,
+        'bubble_data': bubble_data,
+        'latest_month': latest_month,
         'is_authenticated': user.is_authenticated
     }
 
     return render(request, 'ecopoints/insights.html', context)
 
+def get_bubble_data_for_month(user, month):
+    bubble_plot_data = (
+        CompletedTask.objects.filter(user=user, completed_at__month=month)
+        .annotate(day=ExtractDay('completed_at'))
+        .values('day', 'task__category__name')
+        .annotate(total_points=Sum('task__score'))
+        .order_by('day', 'task__category__name')
+    )
+
+    return [
+        {"day": entry["day"], "category": entry["task__category__name"], "points": entry["total_points"]}
+        for entry in bubble_plot_data
+    ]
+
+def get_bubble_data(request, month):
+    user = request.user
+    if user.is_authenticated:
+        bubble_data = get_bubble_data_for_month(user, month)
+    else:
+        bubble_data = []
+    return JsonResponse({"bubble_data": bubble_data})
 
 @login_required(login_url='/accounts/login/')
 def dashboard(request):
@@ -115,6 +179,15 @@ def dashboard(request):
     return render(request, 'ecopoints/dashboard.html', context=context_dict)
 
 
+def categories(request):
+    category_list = Category.objects.all()
+    context_dict = {
+        'categories': category_list
+    }
+
+    return render(request, 'ecopoints/categories.html', context=context_dict)
+
+
 def show_category(request, category_slug):
     try:
         category = Category.objects.get(slug=category_slug)
@@ -128,6 +201,20 @@ def show_category(request, category_slug):
         'tasks': tasks
     }
     return render(request, 'ecopoints/category.html', context=context_dict)
+
+
+class LikeCategoryView(View):
+    def get(self, request):
+        category_id = request.GET['category_id']
+        try:
+            category = Category.objects.get(id=int(category_id))
+        except Category.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+        category.liked = category.liked + 1
+        category.save()
+        return HttpResponse(category.liked)
 
 
 @login_required

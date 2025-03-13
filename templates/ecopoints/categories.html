@@ -1,0 +1,32 @@
+{% extends 'ecopoints/base.html' %}
+
+{% block title_block %}
+    Categories
+{% endblock %}
+
+{% block body_block %}
+    <h1 class="my-5">All Categories</h1>
+    <hr />
+    {% if categories %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 my-3">
+            {% for category in categories %}
+                <div class="col">
+                    <a class="card" href="{% url 'ecopoints:show_category' category.slug %}">
+                        <img
+                            src="{{ category.banner.url }}"
+                            class="card-img-top"
+                            alt="{{ category.name }} image"
+                            style="max-height: 10rem; object-fit: cover; object-position: center;"
+                        >
+                        <div class="card-body">
+                            <p class="card-text">{{ category.name }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <strong>There are no categories present.</strong>
+    {% endif %}
+{% endblock %}
+
