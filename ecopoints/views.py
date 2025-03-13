@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from .models import CompletedTask, Category, Task
 from django.http import HttpResponse
 from django.views import View
+from collections import defaultdict
 
 
 def index(request):
@@ -44,10 +45,11 @@ def insights(request):
             .order_by('month')
         )
 
-        annual_points = [
-            {"month": entry["month"], "points": entry["total_points"]}
-            for entry in monthly_points_data
-        ]
+        points_dict = defaultdict(lambda:0)
+        for entry in monthly_points_data:
+            points_dict[entry["month"]] = entry["total_points"]
+
+        annual_points = [{"month": month, "points": points_dict[month]} for month in range(1, 13)]
 
         latest_month = (
             CompletedTask.objects.filter(user=user)
@@ -76,6 +78,7 @@ def insights(request):
     else:
         daily_points = weekly_points = monthly_points = 0
         annual_points = []
+        bubble_data = []
 
     context = {
         'daily_points': daily_points,
