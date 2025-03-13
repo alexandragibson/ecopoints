@@ -29,7 +29,7 @@ SECRET_KEY = '66=k5u93_7inha(^8bh*u30w@3l)%d(5hdd5ty_7usd%y)2+_('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["ecopoints-zewf.onrender.com"]
+ALLOWED_HOSTS = ["ecopoints-zewf.onrender.com", "localhost", "127.0.0.1"]
 
 # Allow access to the Django admin site from phone during development
 # ALLOWED_HOSTS = [
