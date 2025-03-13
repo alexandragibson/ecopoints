@@ -5,14 +5,15 @@ from .models import CompletedTask, Category, Task
 from django.http import HttpResponse
 from django.views import View
 
-def index(request):
 
+def index(request):
     return render(request, 'ecopoints/index.html')
 
 
 def calculate_points(user, start_date):
     tasks = CompletedTask.objects.filter(user=user, completed_at__gte=start_date)
     return sum(task.task.score for task in tasks)
+
 
 @login_required
 def insights(request):
@@ -107,6 +108,15 @@ def dashboard(request):
     }
 
     return render(request, 'ecopoints/dashboard.html', context=context_dict)
+
+
+def categories(request):
+    category_list = Category.objects.all()
+    context_dict = {
+        'categories': category_list
+    }
+
+    return render(request, 'ecopoints/categories.html', context=context_dict)
 
 
 def show_category(request, category_slug):
