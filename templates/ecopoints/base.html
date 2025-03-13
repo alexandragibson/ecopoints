@@ -25,26 +25,34 @@
         {% block head_block %}
         {% endblock %}
     </head>
-    <body class="d-flex flex-column min-vh-100" data-bs-theme="dark">
+    <body class="min-vh-100 d-flex flex-column" data-bs-theme="dark">
         <nav class="navbar navbar-expand-lg" style="background-color: var(--bs-secondary-bg);">
             <div class="container-fluid">
                 <!-- Left Section: Logo and Links -->
                 <div class="d-flex align-items-center">
                     <!-- Brand Logo -->
                     <a class="navbar-brand me-3" href="{% url 'ecopoints:index' %}">
-                        <img class="nav__logo" src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints Logo" height="40">
+                        <img class="nav__logo" src="{% static 'images/ecopoints_rainbow.png' %}" alt="ecopoints Logo"
+                             height="40">
                     </a>
 
                     <!-- Navbar Links -->
                     <ul class="navbar-nav d-none d-lg-flex">
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'ecopoints:index' %}">Home</a>
+                            <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                               href="{% url 'ecopoints:index' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'insights' %}active{% endif %}" href="{% url 'ecopoints:insights' %}">Insights</a>
+                            <a class="nav-link {% if request.resolver_match.url_name == 'insights' %}active{% endif %}"
+                               href="{% url 'ecopoints:insights' %}">Insights</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'ecopoints:dashboard' %}">Dashboard</a>
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                               href="{% url 'ecopoints:dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'categories' %}active{% endif %}"
+                               href="{% url 'ecopoints:categories' %}">Categories</a>
                         </li>
                     </ul>
                 </div>
@@ -52,8 +60,9 @@
                 <!-- Right Section: Mobile Toggle + Auth Buttons -->
                 <div class="d-flex align-items-center">
                     <!-- Mobile Toggle Button -->
-                    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
@@ -62,7 +71,8 @@
                         <ul class="navbar-nav ms-auto">
                             {% if user.is_authenticated %}
                                 <li class="nav-item">
-                                    <a class="btn btn-primary" href="{% url 'auth_logout' %}?next={% url 'ecopoints:index' %}">Logout</a>
+                                    <a class="btn btn-primary"
+                                       href="{% url 'auth_logout' %}?next={% url 'ecopoints:index' %}">Logout</a>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
@@ -74,29 +84,30 @@
                 </div>
             </div>
         </nav>
-        <main class="flex-grow-1"></main>
-            <div class="container">
-                {% block body_block %}
-                    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
-                        <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
-                        <hr />
-                    </div>
-                {% endblock %}
-            </div>
-        </main>
-        <div>
-            {% block sidebar_block %}
+        <main class="container">
+            {% block body_block %}
+                <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+                    <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" />
+                    <hr />
+                </div>
             {% endblock %}
-        </div>
-        <footer class="text-center py-3" style="background-color: var(--bs-secondary-bg); color: var(--bs-body-color);">
+        </main>
+        <footer class="text-center py-3 mt-auto"
+                style="background-color: var(--bs-secondary-bg); color: var(--bs-body-color);">
             <div class="container">
                 <ul class="list-inline">
-                    <li class="list-inline-item"><a class="text-decoration-none" style="color: var(--bs-link-color);" href="{% url 'ecopoints:index' %}">Home</a></li>
+                    <li class="list-inline-item"><a class="text-decoration-none" style="color: var(--bs-link-color);"
+                                                    href="{% url 'ecopoints:index' %}">Home</a></li>
 
                     {% if user.is_authenticated %}
-                        <li class="list-inline-item"><a class="text-decoration-none" style="color: var(--bs-link-color);" href="{% url 'auth_logout' %}?next={% url 'ecopoints:index' %}">Logout</a></li>
+                        <li class="list-inline-item"><a class="text-decoration-none"
+                                                        style="color: var(--bs-link-color);"
+                                                        href="{% url 'auth_logout' %}?next={% url 'ecopoints:index' %}">Logout</a>
+                        </li>
                     {% else %}
-                        <li class="list-inline-item"><a class="text-decoration-none" style="color: var(--bs-link-color);" href="{% url 'auth_login' %}">Login</a></li>
+                        <li class="list-inline-item"><a class="text-decoration-none"
+                                                        style="color: var(--bs-link-color);"
+                                                        href="{% url 'auth_login' %}">Login</a></li>
                     {% endif %}
                 </ul>
                 <hr class="my-2" style="border-color: var(--bs-body-color); opacity: 0.5;">
