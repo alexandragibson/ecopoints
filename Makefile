@@ -13,9 +13,8 @@ test:
 collectstatic:
 	python manage.py collectstatic
 
-
 compress:
 	python manage.py compress --force
 
 populate:
-	python manage.py populate_ecopoints.py
+	python populate_ecopoints.py
