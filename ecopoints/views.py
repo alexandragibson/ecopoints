@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from datetime import datetime
 from django.db.models.functions import ExtractMonth, ExtractDay
 from django.http import JsonResponse
-from .models import CompletedTask, Category, Task
+from .models import CompletedTask, Category, Task, UserProfile
 from django.http import HttpResponse
 from django.views import View
 from collections import defaultdict
@@ -215,9 +215,9 @@ class LikeCategoryView(View):
             return HttpResponse(-1)
         except ValueError:
             return HttpResponse(-1)
-        category.liked = category.liked + 1
+        UserProfile.liked_category = category
         category.save()
-        return HttpResponse(category.liked)
+        return HttpResponse()
 
 
 @login_required

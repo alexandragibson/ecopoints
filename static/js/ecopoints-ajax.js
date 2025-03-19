@@ -1,14 +1,15 @@
 $(document).ready(function() {
 
-    $('#like_btn').click(function() {
-        var categoryIdVar;
-        categoryIdVar = $(this).attr('data-categoryid');
+  $('#like_btn').click(function() {
+    var catecategoryIdVar;
+    catecategoryIdVar = $(this).attr('data-categoryid');
 
-        $.get('/ecopoints/like_category/',
-            {'category_id': categoryIdVar},
-            function() {
-                $('#like_btn').hide();
-            })
-    });
+    $.get('/rango/like_category/',
+    {'category_id': catecategoryIdVar},
+function(data) {
+      $('#like_count').html(data);
+      $('#like_btn').hide();
+    })
+   });
 
 });
