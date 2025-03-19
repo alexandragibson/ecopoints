@@ -13,3 +13,5 @@ notes.md
 
 # assets folder
 assets/*
+
+.coverage

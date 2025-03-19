@@ -14,12 +14,13 @@
         <img src="{{ category.banner.url }}" alt="{{ category.name }}"
              style="max-height: 400px; width: 100%; object-fit: cover" />
         <h1>{{ category.name }}</h1>
-            <button id="like_btn"
-                    data-categoryid="{{ category.id }}"
-                    class="btn btn-primary btm-sm"
-                    type="button">
-                    <span data-feather="thumbs-up"></span>
-                    Like category</button>
+        <button id="like_btn"
+                data-categoryid="{{ category.id }}"
+                class="btn btn-primary btm-sm"
+                type="button">
+            <span data-feather="thumbs-up"></span>
+            Like category
+        </button>
         <p>{{ category.description }}</p>
 
         <h2>Tasks</h2>
@@ -44,7 +45,7 @@
             <p>No tasks available</p>
         {% endif %}
     {% else %}
-        <p>Cannot find category</p>
+        <p>Category not found.</p>
     {% endif %}
     <div class="toast-container toast-container--top-center">
         <div id="logTaskToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -60,5 +61,5 @@
             </div>
         </div>
     </div>
-<br />
+    <br />
 {% endblock %}
