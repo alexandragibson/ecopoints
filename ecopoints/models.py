@@ -8,7 +8,7 @@ from django.template.defaultfilters import slugify
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
-    banner = models.ImageField(upload_to='category_images', blank=True)
+    banner = models.ImageField(upload_to='category_images', blank=True, default='category_images/default.jpg')
     slug = models.SlugField(unique=True)
     liked = models.IntegerField(default=0)
 
