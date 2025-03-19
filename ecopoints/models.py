@@ -8,7 +8,7 @@ from django.template.defaultfilters import slugify
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
-    banner = models.ImageField(upload_to='category_images', blank=False)
+    banner = models.ImageField(upload_to='category_images', blank=True)
     slug = models.SlugField(unique=True)
     liked = models.IntegerField(default=0)
 
@@ -18,6 +18,8 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
+        if self.liked < 0:
+            self.liked = 0
         super(Category, self).save(*args, **kwargs)
 
 
@@ -51,9 +53,6 @@ class CompletedTask(models.Model):
 class UserProfile(models.Model):
     # Link a UserProfile to a User model instance:
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # Timestamp for account creation
-    # created = models.DateTimeField(auto_now_add=True, default=True)
 
     # Additional attribute for a profile picture:
     picture = models.ImageField(upload_to='profile_images', blank=True)
