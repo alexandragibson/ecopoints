@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from datetime import datetime
 from django.db.models.functions import ExtractMonth, ExtractDay
 from django.http import JsonResponse
+from django.utils import timezone
+
 from .models import CompletedTask, Category, Task
 from django.http import HttpResponse
 from django.views import View
@@ -21,10 +23,15 @@ def calculate_points(user, start_date):
             or 0
     )
 
+
+def make_date_timezone_aware(date):
+    return timezone.make_aware(datetime.combine(date, datetime.min.time()))
+
+
 @login_required
 def insights(request):
     user = request.user
-    today = datetime.now().date()
+    today = make_date_timezone_aware(datetime.now().date())
 
     # using weekday() method to calculate the start of the week (Mon)
     # weekday() returns 0 for Mon and 6 for Sun
@@ -92,6 +99,7 @@ def insights(request):
 
     return render(request, 'ecopoints/insights.html', context)
 
+
 def get_bubble_data_for_month(user, month):
     bubble_plot_data = (
         CompletedTask.objects.filter(user=user, completed_at__month=month)
@@ -106,6 +114,7 @@ def get_bubble_data_for_month(user, month):
         for entry in bubble_plot_data
     ]
 
+
 def get_bubble_data(request, month):
     user = request.user
     if user.is_authenticated:
@@ -114,10 +123,11 @@ def get_bubble_data(request, month):
         bubble_data = []
     return JsonResponse({"bubble_data": bubble_data})
 
+
 @login_required(login_url='/accounts/login/')
 def dashboard(request):
     user = request.user
-    today = datetime.now().date()
+    today = make_date_timezone_aware(datetime.now().date())
     category_list = Category.objects.all()
     task_list = Task.objects.all()
     completed_tasks = CompletedTask.objects.filter(user=request.user).order_by('-completed_at')
@@ -182,6 +192,7 @@ def dashboard(request):
     return render(request, 'ecopoints/dashboard.html', context=context_dict)
 
 
+@login_required(login_url='/accounts/login/')
 def categories(request):
     category_list = Category.objects.all()
     context_dict = {
@@ -191,13 +202,14 @@ def categories(request):
     return render(request, 'ecopoints/categories.html', context=context_dict)
 
 
+@login_required(login_url='/accounts/login/')
 def show_category(request, category_slug):
     try:
         category = Category.objects.get(slug=category_slug)
         tasks = Task.objects.filter(category=category)
     except Category.DoesNotExist:
-        category = None
-        tasks = None
+        category = Category.objects.none()
+        tasks = Task.objects.none()
 
     context_dict = {
         'category': category,
@@ -220,7 +232,7 @@ class LikeCategoryView(View):
         return HttpResponse(category.liked)
 
 
-@login_required
+@login_required(login_url='/accounts/login/')
 def complete_task(request, task_id):
     if request.method == 'POST':
         if task_id:
