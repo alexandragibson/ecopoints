@@ -14,6 +14,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = 'Categories'
+        app_label = 'ecopoints'
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -27,6 +28,9 @@ class Task(models.Model):
     score = models.PositiveSmallIntegerField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+    class Meta:
+        app_label = 'ecopoints'
+
     def __str__(self):
         return self.name
 
@@ -37,20 +41,25 @@ class CompletedTask(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     completed_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        app_label = 'ecopoints'
+
     def __str__(self):
         return f"{self.user.username} completed {self.task.name}"
 
 
 class UserProfile(models.Model):
-
     # Link a UserProfile to a User model instance:
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Timestamp for account creation
-    #created = models.DateTimeField(auto_now_add=True, default=True)
+    # created = models.DateTimeField(auto_now_add=True, default=True)
 
     # Additional attribute for a profile picture:
     picture = models.ImageField(upload_to='profile_images', blank=True)
+
+    class Meta:
+        app_label = 'ecopoints'
 
     # Return username value when a String representation of the user is needed
     def __str__(self):
