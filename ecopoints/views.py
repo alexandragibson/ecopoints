@@ -6,6 +6,7 @@ from django.db.models.functions import ExtractMonth, ExtractDay
 from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
+from django.db.models.functions import TruncDate
 
 from .models import CompletedTask, Category, Task
 from django.http import HttpResponse
@@ -33,6 +34,7 @@ def make_date_timezone_aware(date):
 def insights(request):
     user = request.user
     today = make_date_timezone_aware(datetime.now().date())
+    current_month = datetime.now().strftime("%B")
 
     # using weekday() method to calculate the start of the week (Mon)
     # weekday() returns 0 for Mon and 6 for Sun
@@ -60,6 +62,22 @@ def insights(request):
             completed_at__month=start_of_month.month,
             completed_at__year=start_of_month.year
         )
+
+        top_category_data = (
+            monthly_completed_tasks
+            .values('task__category__name')
+            .annotate(total=Sum('task__score'))
+            .order_by('-total')
+            .first()
+        )
+
+        if top_category_data:
+            top_category = top_category_data['task__category__name']
+            top_category_points = top_category_data['total']
+        else:
+            top_category = "N/A"
+            top_category_points = 0
+
 
         days_with_tasks = monthly_completed_tasks.values('completed_at__date').distinct().count()
         total_completed_tasks = monthly_completed_tasks.count()
@@ -109,7 +127,10 @@ def insights(request):
         'weekly_data': weekly_data,
         'days_with_tasks': days_with_tasks,
         'total_completed_tasks': total_completed_tasks,
-        'is_authenticated': user.is_authenticated
+        'current_month' : current_month,
+        'is_authenticated': user.is_authenticated,
+        'top_category': top_category,
+        'top_category_points': top_category_points
     }
 
     return render(request, 'ecopoints/insights.html', context)

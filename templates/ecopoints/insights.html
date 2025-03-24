@@ -1,6 +1,91 @@
 {% extends 'ecopoints/base.html' %}
 {% load staticfiles %}
 
+{% block head_block %}
+    <style>
+        /* TYPOGRAPHY */
+        .card .display-1 {
+            font-size: 8rem;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .card .fs-5 {
+            font-size: 1.2rem;
+        }
+
+        .donut-score {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .fw-medium {
+            font-weight: 500;
+        }
+
+        .text-uppercase {
+            text-transform: uppercase;
+        }
+
+        /* POINTS BADGE STYLING */
+        .points-badge {
+            background-color: #f28ab2;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 0.35em 0.65em;
+            border-radius: 999px;
+            display: inline-block;
+            margin: 0 0.25rem;
+            line-height: 1;
+        }
+
+        .points-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(242, 138, 178, 0.6);
+        }
+
+        /* BORDERS & LAYOUT SPACING */
+        .border-bottom {
+            border-bottom: 1px solid var(--bs-border-color) !important;
+        }
+
+        .theme-border {
+            border: 1px solid var(--bs-border-color) !important;
+        }
+
+        hr.theme-border {
+            border-color: var(--bs-border-color);
+            opacity: 0.5;
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .pb-2 {
+            padding-bottom: 0.5rem !important;
+        }
+
+        .row .col-md-4 {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .row .col-md-4 .card {
+            flex: 1;
+        }
+
+        @media (max-width: 576px) {
+            .card .display-1 {
+                font-size: 3.5rem;
+            }
+
+            .card .fs-5 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block title_block %}
     Insights
 {% endblock %}
@@ -9,15 +94,14 @@
     <h1 class="my-5">Insights</h1>
     <hr />
     <div class="container my-4">
-
-
         {% if user.is_authenticated %}
-            <!-- Welcome Modal -->
+
+            <!-- WELCOME MODAL -->
             <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="welcomeModalLabel">Welcome to Insights!</h5>
+                            <h5 class="modal-title">Welcome to Insights!</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -31,98 +115,129 @@
             </div>
 
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+                document.addEventListener('DOMContentLoaded', () => {
+                    const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
                     welcomeModal.show();
                 });
             </script>
 
-            <!-- Charts -->
-            <div class="row mb-4">
-
-                <!-- Bubble Chart & Annual Histogram -->
+            <!-- MONTHLY TOTALS SECTION -->
+            <section class="row mb-4">
                 <div class="col-12 mb-4">
                     <h2 class="my-3">Monthly Totals</h2>
                     <div class="card">
-                        <!-- <div class="card-header">Monthly Totals</div> -->
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center">
-                                <div id="bubble-plot"></div>
-                            </div>
-                            <!-- <p class="mt-3 text-center">
-                                Click on a month (bar within graph) to update the bubble chart.
-                            </p> -->
+                        <div class="card-body d-flex justify-content-center">
+                            <div id="bubble-plot"></div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Placeholder Section -->
+            <!-- TOP CATEGORY HIGHLIGHT -->
+            <section class="row">
+                <div class="col-12 text-center my-4">
+                    <div class="d-flex align-items-center justify-content-center" style="gap: 1rem;">
+                        <hr class="flex-grow-1 theme-border m-0" />
+                        <p class="m-0 small text-muted">
+                            <strong>TOP CATEGORY THIS MONTH:</strong> {{ top_category }} w/ <span class="points-badge">{{ top_category_points }}</span> ecopoints
+                        </p>
+                        <hr class="flex-grow-1 theme-border m-0" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- STATS SECTION -->
+            <section class="row">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">Placeholder</div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center">
+                    <h2 class="my-5">Stats</h2>
+                </div>
+
+                <!-- SUMMARY CARDS -->
+                <div class="row mb-4 g-0">
+                    <!-- DAILY -->
+                    <div class="col-md-4 d-flex px-1">
+                        <div class="card text-center flex-fill">
+                            <div class="card-header">Daily Summary</div>
+                            <div class="card-body">
+                                <div class="mb-3 border-bottom pb-2 text-center">
+                                    <small class="text-muted">
+                                        You have earned <span class="points-badge">{{ daily_points }}</span> ecopoints today
+                                    </small>
+                                </div>
+                                <div class="donut-wrapper position-relative">
+                                    <div id="donut-chart"></div>
+                                    <div class="center-text position-absolute top-50 start-50 translate-middle text-center">
+                                        <span class="donut-score text-success">{{ daily_points }}</span><span> / 50</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Summary Cards Section -->
-            <div class="row mb-4">
-                <!-- Daily -->
-                <div class="col-md-4 mb-3">
-                    <div class="card text-center">
-                        <div class="card-header">Daily Summary</div>
-                        <div class="card-body">
-                            <p>You have earned <strong>{{ daily_points }}</strong> ecopoints today.</p>
-                            <div class="donut-wrapper position-relative">
-                                <div id="donut-chart"></div>
-                                <div class="center-text position-absolute top-50 start-50 translate-middle text-center">
-                                    <span style="color: #4CAF50;">{{ daily_points }}</span><span>/50</span>
+                    <!-- WEEKLY -->
+                    <div class="col-md-4 d-flex px-1">
+                        <div class="card text-center flex-fill">
+                            <div class="card-header">Weekly Recap</div>
+                            <div class="card-body">
+                                <div class="mb-3 border-bottom pb-2 text-center">
+                                    <small class="text-muted d-block">
+                                        You have earned <span class="points-badge">{{ weekly_points }}</span> ecopoints this week
+                                    </small>
+                                </div>
+                                <div id="weekly-graph"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MONTHLY -->
+                    <div class="col-md-4 d-flex px-1">
+                        <div class="card text-center border theme-border flex-fill">
+                            <div class="card-header">Monthly Recap</div>
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <!-- Month Label -->
+                                <div class="mb-3 border-bottom pb-2 text-start">
+                                    <small class="text-uppercase text-muted d-block">{{ current_month }} totals</small>
+                                </div>
+
+                                <!-- DAYS -->
+                                <div class="text-center mb-4">
+                                    <h1 class="display-1">{{ days_with_tasks }}</h1>
+                                    <span class="text-muted">DAYS</span>
+                                </div>
+                                <hr class="theme-border my-2" />
+
+                                <!-- ECOPOINTS -->
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong class="fs-5">{{ monthly_points }}</strong>
+                                    <span class="text-muted">ecopoints</span>
+                                </div>
+                                <hr class="theme-border my-2" />
+
+                                <!-- TASKS -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong class="fs-5">{{ total_completed_tasks }}</strong>
+                                    <span class="text-muted">tasks completed</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Weekly -->
-                <div class="col-md-4 mb-3">
-                    <div class="card text-center">
-                        <div class="card-header">Weekly Summary</div>
-                        <div class="card-body">
-                            <p>You have earned <strong>{{ weekly_points }}</strong> ecopoints this week.</p>
-                            <div id="weekly-graph"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Monthly -->
-                <div class="col-md-4 mb-3">
-                    <div class="card text-center">
-                        <div class="card-header">Monthly Summary</div>
-                        <div class="card-body">
-                            <p>You have earned <strong>{{ monthly_points }}</strong> ecopoints this month.</p>
+            </section>
 
-                            <p>You have completed <strong>{{ total_completed_tasks }}</strong> tasks,
-                            <br>
-                            <p>over <strong>{{ days_with_tasks }}</strong> days.</p>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
         {% endif %}
 
+        <!-- Back Home -->
         <div class="text-center">
             <a href="{% url 'index' %}" class="btn btn-secondary">Back to Home</a>
         </div>
     </div>
 
-    <!-- Vega libraries -->
+    <!-- VEGA LIBRARIES -->
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
-    <!-- Provide chart data globally -->
+    <!-- CHART DATA -->
     <script>
         window.ecopointsData = {
             latest_month: {{ latest_month|default:"null" }},
@@ -132,7 +247,7 @@
         };
     </script>
 
-    <!-- Load chart renderer -->
+    <!-- RENDER CHARTS -->
     <script type="module">
         import { renderAllCharts } from "/static/js/ecopoints-charts.js";
         renderAllCharts(window.ecopointsData);
