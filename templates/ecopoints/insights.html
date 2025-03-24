@@ -6,283 +6,130 @@
 {% endblock %}
 
 {% block body_block %}
-<div class="container my-4">
-    <!-- Logo Section -->
-    <div class="text-center mb-4">
-        <img src="{% static 'images/ecopoints_rainbow.png' %}" alt="Ecopoints Logo" class="img-fluid" style="max-width: 200px;">
-    </div>
+    <h1 class="my-5">Insights</h1>
+    <hr />
+    <div class="container my-4">
 
-    {% if user.is_authenticated %}
-        <!-- Welcome Modal -->
-        <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="welcomeModalLabel">Welcome to Insights!</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Explore your daily, weekly, and monthly ecopoints. Click on chart elements for more details!
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+
+        {% if user.is_authenticated %}
+            <!-- Welcome Modal -->
+            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="welcomeModalLabel">Welcome to Insights!</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Explore your daily, weekly, and monthly ecopoints. Click on chart elements for more details!
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-  
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
-                welcomeModal.show();
-            });
-        </script>
 
-        <h2 class="mb-4 text-center">Insights</h2>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+                    welcomeModal.show();
+                });
+            </script>
 
-        <!-- Charts Carousel Section -->
-        <div id="chartsCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <!-- Slide 1: Bubble Chart -->
-                <div class="carousel-item active">
+            <!-- Charts -->
+            <div class="row mb-4">
+
+                <!-- Bubble Chart & Annual Histogram -->
+                <div class="col-12 mb-4">
+                    <h2 class="my-3">Monthly Totals</h2>
                     <div class="card">
-                        <div class="card-header">Bubble Chart</div>
+                        <!-- <div class="card-header">Monthly Totals</div> -->
                         <div class="card-body">
                             <div class="d-flex justify-content-center">
                                 <div id="bubble-plot"></div>
                             </div>
-                            <p class="mt-3 text-center">
+                            <!-- <p class="mt-3 text-center">
                                 Click on a month (bar within graph) to update the bubble chart.
-                            </p>
+                            </p> -->
                         </div>
                     </div>
                 </div>
-                <!-- Slide 2: Annual Histogram -->
-                <div class="carousel-item">
+
+                <!-- Placeholder Section -->
+                <div class="col-12">
                     <div class="card">
-                        <div class="card-header">Annual Histogram</div>
+                        <div class="card-header">Placeholder</div>
                         <div class="card-body">
                             <div class="d-flex justify-content-center">
-                                <div id="annual-histogram"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Carousel controls -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#chartsCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#chartsCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
 
-        <!-- Summary Cards Section -->
-        <div class="row mb-4">
-            <div class="col-md-4 mb-3">
-                <div class="card text-center">
-                    <div class="card-header">Daily Summary</div>
-                    <div class="card-body">
-                        <p>You have earned <strong>{{ daily_points }}</strong> ecopoints today.</p>
+            <!-- Summary Cards Section -->
+            <div class="row mb-4">
+                <!-- Daily -->
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center">
+                        <div class="card-header">Daily Summary</div>
+                        <div class="card-body">
+                            <p>You have earned <strong>{{ daily_points }}</strong> ecopoints today.</p>
+                            <div class="donut-wrapper position-relative">
+                                <div id="donut-chart"></div>
+                                <div class="center-text position-absolute top-50 start-50 translate-middle text-center">
+                                    <span style="color: #4CAF50;">{{ daily_points }}</span><span>/50</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Weekly -->
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center">
+                        <div class="card-header">Weekly Summary</div>
+                        <div class="card-body">
+                            <p>You have earned <strong>{{ weekly_points }}</strong> ecopoints this week.</p>
+                            <div id="weekly-graph"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Monthly -->
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center">
+                        <div class="card-header">Monthly Summary</div>
+                        <div class="card-body">
+                            <p>You have earned <strong>{{ monthly_points }}</strong> ecopoints this month.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card text-center">
-                    <div class="card-header">Weekly Summary</div>
-                    <div class="card-body">
-                        <p>You have earned <strong>{{ weekly_points }}</strong> ecopoints this week.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card text-center">
-                    <div class="card-header">Monthly Summary</div>
-                    <div class="card-body">
-                        <p>You have earned <strong>{{ monthly_points }}</strong> ecopoints this month.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
-    <div class="text-center">
-        <a href="{% url 'index' %}" class="btn btn-secondary">Back to Home</a>
-    </div>
-</div>
-
-<!-- Vega Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-
-<script>
-    window.onload = function() {
-        {% if user.is_authenticated %}
-            let latestMonth = {{ latest_month|default:"null" }};
-            let currentMonth = latestMonth;
-
-            function getThemeStyles() {
-                const body = document.body;
-                const theme = body.getAttribute("data-bs-theme");
-                return {
-                    background: theme === "dark" ? "#212529" : "#ffffff",
-                    textColor: theme === "dark" ? "#ffffff" : "#000000"
-                };
-            }
-
-            function fetchBubbleData(month) {
-                fetch(`/ecopoints/bubble-data/${month}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log("Updated Bubble Data:", data.bubble_data);
-                        updateBubbleChart(data.bubble_data, month);
-                    })
-                    .catch(error => console.error("Error fetching bubble data:", error));
-            }
-
-            function updateBubbleChart(bubbleData, month) {
-                if (bubbleData.length === 0) {
-                    console.warn("No data available for this month.");
-                    document.getElementById("bubble-plot").innerHTML = "<p>No data available for this month.</p>";
-                    return;
-                }
-                const themeStyles = getThemeStyles();
-                const bubblePlot = {
-                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-                    "description": "Daily ecopoints by Category " + month,
-                    "width": 500,
-                    "height": 300,
-                    "background": themeStyles.background,
-                    "data": { "values": bubbleData },
-                    "mark": "circle",
-                    "encoding": {
-                        "x": {
-                            "field": "day",
-                            "type": "ordinal",
-                            "axis": {
-                                "title": "Day of the Month",
-                                "labelColor": themeStyles.textColor,
-                                "titleColor": themeStyles.textColor
-                            }
-                        },
-                        "y": {
-                            "field": "category",
-                            "type": "nominal",
-                            "axis": {
-                                "title": "Category",
-                                "labelColor": themeStyles.textColor,
-                                "titleColor": themeStyles.textColor
-                            }
-                        },
-                        "size": {
-                            "field": "points",
-                            "type": "quantitative",
-                            "scale": {"range": [20, 500]},
-                            "legend": { "disable": true }
-                        },
-                        "color": {
-                            "field": "category",
-                            "type": "nominal",
-                            "scale": {"scheme": "category20"},
-                            "legend": {
-                                "title": "Category",
-                                "labelColor": themeStyles.textColor,
-                                "titleColor": themeStyles.textColor
-                            }
-                        },
-                        "tooltip": [
-                            {"field": "day", "type": "ordinal", "title": "Day"},
-                            {"field": "category", "type": "nominal", "title": "Category"},
-                            {"field": "points", "type": "quantitative", "title": "Total ecopoints"}
-                        ]
-                    },
-                    "config": { "title": {"color": themeStyles.textColor} }
-                };
-                vegaEmbed("#bubble-plot", bubblePlot).catch(console.error);
-            }
-
-            function renderCharts() {
-                const themeStyles = getThemeStyles();
-                if (document.getElementById("annual-histogram") && typeof vegaEmbed !== "undefined") {
-                    const monthNames = {
-                        1: "January", 2: "February", 3: "March", 4: "April",
-                        5: "May", 6: "June", 7: "July", 8: "August",
-                        9: "September", 10: "October", 11: "November", 12: "December"
-                    };
-                    let annualPointsData = {{ annual_points|safe }};
-                    annualPointsData = annualPointsData.map(entry => ({
-                        month: monthNames[entry.month],
-                        points: entry.points
-                    }));
-                    const annualHistogram = {
-                        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-                        "description": "Annual Ecopoints",
-                        "width": 300,
-                        "height": 300,
-                        "background": themeStyles.background,
-                        "data": { "values": annualPointsData },
-                        "mark": "bar",
-                        "encoding": {
-                            "x": {
-                                "field": "month",
-                                "type": "ordinal",
-                                "axis": {
-                                    "title": "",
-                                    "labelColor": themeStyles.textColor,
-                                    "titleColor": themeStyles.textColor
-                                },
-                                "sort": [
-                                    "January", "February", "March", "April", "May", "June",
-                                    "July", "August", "September", "October", "November", "December"
-                                ]
-                            },
-                            "y": {
-                                "field": "points",
-                                "type": "quantitative",
-                                "axis": {
-                                    "title": "ecopoints",
-                                    "labelColor": themeStyles.textColor,
-                                    "titleColor": themeStyles.textColor
-                                }
-                            },
-                            "color": {
-                                "field": "month",
-                                "type": "nominal",
-                                "legend": {
-                                    "title": "Month (clickable bars)",
-                                    "labelColor": themeStyles.textColor,
-                                    "titleColor": themeStyles.textColor
-                                }
-                            },
-                            "tooltip": [
-                                {"field": "month", "type": "ordinal", "title": "Month"},
-                                {"field": "points", "type": "quantitative", "title": "Total ecopoints"}
-                            ]
-                        }
-                    };
-                    vegaEmbed("#annual-histogram", annualHistogram).then(result => {
-                        result.view.addEventListener("click", (event, item) => {
-                            if (item && item.datum) {
-                                const selectedMonth = item.datum.month;
-                                console.log("Selected Month:", selectedMonth);
-                                fetchBubbleData(selectedMonth);
-                            }
-                        });
-                    }).catch(console.error);
-                }
-                fetchBubbleData(currentMonth);
-            }
-
-            renderCharts();
-
-            const observer = new MutationObserver(renderCharts);
-            observer.observe(document.body, { attributes: true, attributeFilter: ["data-bs-theme"] });
         {% endif %}
-    };
-</script>
 
+        <div class="text-center">
+            <a href="{% url 'index' %}" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Vega libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+    <!-- Provide chart data globally -->
+    <script>
+        window.ecopointsData = {
+            latest_month: {{ latest_month|default:"null" }},
+            daily_points: {{ daily_points }},
+            weekly_data: {{ weekly_data|safe }},
+            annual_points: {{ annual_points|safe }}
+        };
+    </script>
+
+    <!-- Load chart renderer -->
+    <script type="module">
+        import { renderAllCharts } from "/static/js/ecopoints-charts.js";
+        renderAllCharts(window.ecopointsData);
+    </script>
 {% endblock %}
