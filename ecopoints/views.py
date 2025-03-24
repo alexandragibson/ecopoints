@@ -45,7 +45,6 @@ def insights(request):
         weekly_points = calculate_points(user, start_of_week)
         monthly_points = calculate_points(user, start_of_month)
 
-
         weekly_data = get_weekly_data(user)
 
         monthly_points_data = (
@@ -63,12 +62,7 @@ def insights(request):
         )
 
         days_with_tasks = monthly_completed_tasks.values('completed_at__date').distinct().count()
-        num_completed_tasks = monthly_completed_tasks.count()
-
-
-        days_with_tasks = monthly_completed_tasks.values('completed_at__date').distinct().count()
-        num_completed_tasks = monthly_completed_tasks.count()
-
+        total_completed_tasks = monthly_completed_tasks.count()
 
         points_dict = defaultdict(lambda:0)
         for entry in monthly_points_data:
@@ -114,7 +108,7 @@ def insights(request):
         'latest_month': latest_month,
         'weekly_data': weekly_data,
         'days_with_tasks': days_with_tasks,
-        'num_completed_tasks': num_completed_tasks,
+        'total_completed_tasks': total_completed_tasks,
         'is_authenticated': user.is_authenticated
     }
 
