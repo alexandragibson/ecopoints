@@ -274,8 +274,10 @@ class LikeCategoryView(View):
         except ValueError:
             return HttpResponse(-1)
         UserProfile.liked_category = category
+        UserProfile.liked_category.save()
+        category.likes = category.likes + 1
         category.save()
-        return HttpResponse()
+        return HttpResponse(category.likes)
 
 
 @login_required(login_url='/accounts/login/')
