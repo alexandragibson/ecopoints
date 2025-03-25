@@ -14,13 +14,16 @@
         <img src="{{ category.banner.url }}" alt="{{ category.name }}"
              style="max-height: 400px; width: 100%; object-fit: cover" />
         <h1>{{ category.name }}</h1>
-        <button id="like_btn"
-                data-categoryid="{{ category.id }}"
-                class="btn btn-primary btm-sm"
-                type="button">
-            <span data-feather="thumbs-up"></span>
-            Like category
-        </button>
+        <br />
+        <div>
+            <button id="like_btn"
+                    data-categoryid="{{ category.id }}"
+                    class="btn btn-primary btm-sm"
+                    type="button">
+                <span data-feather="thumbs-up"></span>
+                Like category
+            </button>
+        </div>
         <p>{{ category.description }}</p>
 
         <h2>Tasks</h2>

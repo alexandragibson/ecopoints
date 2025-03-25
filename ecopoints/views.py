@@ -7,8 +7,6 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
 from django.db.models.functions import TruncDate
-
-from .models import CompletedTask, Category, Task
 from .models import CompletedTask, Category, Task, UserProfile
 from django.http import HttpResponse
 from django.views import View
@@ -266,6 +264,7 @@ def show_category(request, category_slug):
 
 
 class LikeCategoryView(View):
+    @login_required(login_url='/accounts/login/')
     def get(self, request):
         category_id = request.GET['category_id']
         try:
