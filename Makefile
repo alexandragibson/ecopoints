@@ -17,4 +17,8 @@ compress:
 	python manage.py compress --force
 
 populate:
-	python populate_ecopoints.py
+	python ./populate_ecopoints.py
+
+coverage:
+	coverage run --source='.' manage.py test ecopoints.tests
+	coverage report -m # -m shows line where coverage is missing
