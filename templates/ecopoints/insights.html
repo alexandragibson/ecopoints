@@ -85,7 +85,7 @@
         }
 
         /* Bubble plot: dynamic re-sizing  */
-        #bubble-plot canvas {
+        #bubble-plot svg {
             max-width: 100% !important;
             height: auto !important;
             display: block;
@@ -93,7 +93,7 @@
         }
 
         /* Donut chart: dynamic re-sizing */
-        #donut-chart canvas {
+        #donut-chart svg {
             max-width: 100% !important;
             height: auto !important;
             display: block;
@@ -101,7 +101,7 @@
         }
 
         /* Weekly graph: dynamic re-sizing */
-        #weekly-graph canvas {
+        #weekly-graph svg {
             max-width: 100% !important;
             height: auto !important;
             display: block;
@@ -266,9 +266,9 @@
     <script>
         window.ecopointsData = {
             latest_month: {{ latest_month|default:"null" }},
-            daily_points: {{ daily_points }},
-            weekly_data: {{ weekly_data|safe }},
-            annual_points: {{ annual_points|safe }}
+            daily_points: {{ daily_points|default:0 }},
+            weekly_data: {{ weekly_data|safe|default:"[]" }},
+            annual_points: {{ annual_points|safe|default:"[]" }}
         };
     </script>
 

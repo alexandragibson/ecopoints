@@ -15,24 +15,38 @@ export function renderAllCharts(data) {
     points: d.points
   }));
 
-  renderDonutChart("#donut-chart", daily_points);
-  renderWeeklyChart(weekly_data);
+  console.log("Chart data:", data);
+  console.log("Annual points data:", data.annual_points);
+  console.log("Annual Vega data:", annualData);
 
-  fetch(`/ecopoints/bubble-data/${latest_month}/`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.bubble_data?.length > 0) {
-        renderBubbleAndBarCharts(data.bubble_data, annualData);
-      } else {
-        document.getElementById("bubble-plot").innerHTML = "<p>No data available for this month.</p>";
-      }
-    })
-    .catch(err => {
-      console.error("Bubble chart fetch error:", err);
-      document.getElementById("bubble-plot").innerHTML = "<p>Error loading chart.</p>";
-    });
+  // Prevent crash if donut or weekly data is missing
+  if (typeof daily_points !== "undefined") {
+    renderDonutChart("#donut-chart", daily_points);
+  }
+
+  if (Array.isArray(weekly_data)) {
+    renderWeeklyChart(weekly_data);
+  }
+
+  // Only run bubble plot if latest_month is valid
+  if (latest_month) {
+    fetch(`/ecopoints/bubble-data/${latest_month}/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.bubble_data?.length > 0) {
+          renderBubbleAndBarCharts(data.bubble_data, annualData);
+        } else {
+          document.getElementById("bubble-plot").innerHTML = "<p>No data available for this month.</p>";
+        }
+      })
+      .catch(err => {
+        console.error("Bubble chart fetch error:", err);
+        document.getElementById("bubble-plot").innerHTML = "<p>Error loading chart.</p>";
+      });
+  } else {
+    document.getElementById("bubble-plot").innerHTML = "<p>No data available for this month.</p>";
+  }
 }
-
 
 //*------------------------------------------------------------*
 // BACKGROUND & FONT COLOURS
@@ -53,20 +67,17 @@ export function getThemeStyles() {
 export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
   const themeStyles = getThemeStyles();
 
-  const baseAutosize = {
-    "type": "fit",
-    "resize": true,
-    "contains": "padding"
-  };
-
   const bubblePlot = {
     "width": "container",
     "height": 300,
     "background": "transparent",
     "align": "center",
-    "autosize": baseAutosize,
     "data": { "values": bubbleData },
-    "mark": "circle",
+    "mark": {
+      "type": "circle",
+      "cursor": "pointer",
+      "filled": true
+    },
     "encoding": {
       "x": {
         "field": "day",
@@ -115,8 +126,19 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
     "height": 150,
     "background": "transparent",
     "align": "center",
-    "autosize": baseAutosize,
-    "mark": "bar",
+    "data": { "values": annualPointsData },
+    "mark": {
+      "type": "bar",
+      "cursor": "pointer",
+      "filled": true
+    },
+    "selection": {
+      "monthSelection": {
+        "type": "single",
+        "fields": ["month"],
+        "on": "click"
+      }
+    },
     "encoding": {
       "x": {
         "field": "points",
@@ -130,6 +152,12 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
       "y": {
         "field": "month",
         "type": "ordinal",
+        "scale": {
+          "domain": [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ]
+        },
         "sort": [
           "January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"
@@ -160,7 +188,6 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "vconcat": [bubblePlot, annualHistogram],
     "spacing": 50,
-    "autosize": baseAutosize,
     "config": {
       "background": "transparent",
       "title": { "color": themeStyles.textColor }
@@ -169,12 +196,34 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
 
   vegaEmbed("#bubble-plot", combinedSpec, {
     actions: false,
-    renderer: "canvas",
+    renderer: "svg",
     container: "#bubble-plot",
     defaultStyle: true
+  }).then(result => {
+    // Register a click handler on the view
+    result.view.addEventListener('click', (event, item) => {
+      if (item && item.mark && item.mark.marktype === 'bar' && item.datum && item.datum.month) {
+        const clickedMonthName = item.datum.month;
+
+        const monthMap = {
+          "January": 1, "February": 2, "March": 3, "April": 4,
+          "May": 5, "June": 6, "July": 7, "August": 8,
+          "September": 9, "October": 10, "November": 11, "December": 12
+        };
+
+        const selectedMonth = monthMap[clickedMonthName];
+        if (selectedMonth) {
+          fetch(`/ecopoints/bubble-data/${selectedMonth}/`)
+            .then(res => res.json())
+            .then(data => {
+              renderBubbleAndBarCharts(data.bubble_data, annualPointsData);  // re-render bubble+bar
+            })
+            .catch(err => console.error("Error fetching bubble data:", err));
+        }
+      }
+    });
   });
 }
-
 
 //*------------------------------------------------------------*
 // DONUT CHART
@@ -184,10 +233,9 @@ export function renderDonutChart(targetId, dailyPoints, goal = 50) {
 
   const donutSpec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": "container",
+    "width": "250",
     "height": 250,
     "background": "transparent",
-    "autosize": { "type": "fit", "contains": "padding"},
     "description": "Daily points donut chart",
     "data": {
       "values": [
@@ -248,10 +296,9 @@ export function renderWeeklyChart(weeklyData) {
 
   const weeklySpec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": "container",
-    "height": 200,
+    "width": "300",
+    "height": 250,
     "background": "transparent",
-    "autosize": { "type": "fit", "contains": "padding" },
     "data": { "values": fullWeeklyValues },
     "mark": {
       "type": "area",
