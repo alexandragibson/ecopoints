@@ -184,9 +184,10 @@ export function renderDonutChart(targetId, dailyPoints, goal = 50) {
 
   const donutSpec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": 250,
+    "width": "container",
     "height": 250,
     "background": "transparent",
+    "autosize": { "type": "fit", "contains": "padding"},
     "description": "Daily points donut chart",
     "data": {
       "values": [
