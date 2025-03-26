@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
 from django.db.models.functions import TruncDate
-from ecopoints.models import CompletedTask, Category, Task, UserProfile, LikedCategory
+from ecopoints.models import CompletedTask, Category, Task, UserProfile
 from django.http import HttpResponse
 from django.views import View
 from collections import defaultdict
@@ -257,9 +257,9 @@ def show_category(request, category_slug):
         tasks = Task.objects.none()
 
     # Logic to check if user has liked this page
-    liked_category = LikedCategory.objects.filter(user=request.user, category=category)
+    user_profile = UserProfile.objects.filter(user=request.user, category=category)
     show_like_button = True
-    if liked_category.category.name == category: # Category already liked
+    if user_profile.category.name == category: # Category already liked
         show_like_button = False
 
     context_dict = {
@@ -300,7 +300,7 @@ def complete_task(request, task_id):
                 return redirect('ecopoints:dashboard')
 
             # Create a CompletedTask record for the logged-in user
-            CompletedTask.objects.create(user=request.user, task=task)
+            CompletedTask.objects.create(user=request.user, category=category)
         return redirect('ecopoints:dashboard')
     else:
         # If someone navigates here with GET, just redirect to dashboard
