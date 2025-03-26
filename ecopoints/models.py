@@ -18,8 +18,8 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        if self.liked < 0:
-            self.liked = 0
+        if self.likes < 0:
+            self.likes = 0
         super(Category, self).save(*args, **kwargs)
 
 

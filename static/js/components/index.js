@@ -1,6 +1,6 @@
 // Run the function when the DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
-
+  console.log('DOM is ready');
   // for the score bar
   if (document.querySelector('.score_bar')) {
     animateScoreBar();

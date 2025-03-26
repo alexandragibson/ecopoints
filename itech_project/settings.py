@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os.path
 from pathlib import Path
+from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qs
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -91,11 +95,25 @@ WSGI_APPLICATION = 'itech_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+db_url = os.getenv("DATABASE_URL")
+tmpPostgres = urlparse(db_url)
+
+query_params = parse_qs(tmpPostgres.query)
+options = query_params.get("options", [None])[0]
+sslmode = query_params.get("sslmode", ["require"])[0]
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.lstrip('/'),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': tmpPostgres.port or 5432,
+        'OPTIONS': {
+            'sslmode': sslmode,
+            **({'options': options} if options else {})
+        },
     }
 }
 
@@ -136,6 +154,7 @@ STATIC_URL = '/static/'  # the URL to access the static files
 STATIC_ROOT = STATICFILES_DIR  # where the compressed files will be stored for production
 
 STATICFILES_DIRS = [STATIC_DIR]  # where the static files are stored for development
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -151,3 +170,4 @@ COMPRESS_ROOT = STATIC_ROOT
 # Media files (uploaded by admins or users)
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
+
