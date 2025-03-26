@@ -53,10 +53,18 @@ export function getThemeStyles() {
 export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
   const themeStyles = getThemeStyles();
 
+  const baseAutosize = {
+    "type": "fit",
+    "resize": true,
+    "contains": "padding"
+  };
+
   const bubblePlot = {
-    "width": 700,
+    "width": "container",
     "height": 300,
     "background": "transparent",
+    "align": "center",
+    "autosize": baseAutosize,
     "data": { "values": bubbleData },
     "mark": "circle",
     "encoding": {
@@ -103,10 +111,11 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
   };
 
   const annualHistogram = {
-    "width": 700,
+    "width": "container",
     "height": 150,
     "background": "transparent",
-    "data": { "values": annualPointsData },
+    "align": "center",
+    "autosize": baseAutosize,
     "mark": "bar",
     "encoding": {
       "x": {
@@ -151,13 +160,19 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "vconcat": [bubblePlot, annualHistogram],
     "spacing": 50,
+    "autosize": baseAutosize,
     "config": {
       "background": "transparent",
       "title": { "color": themeStyles.textColor }
     }
   };
 
-  vegaEmbed("#bubble-plot", combinedSpec, { actions: false });
+  vegaEmbed("#bubble-plot", combinedSpec, {
+    actions: false,
+    renderer: "canvas",
+    container: "#bubble-plot",
+    defaultStyle: true
+  });
 }
 
 
@@ -232,9 +247,10 @@ export function renderWeeklyChart(weeklyData) {
 
   const weeklySpec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": 250,
+    "width": "container",
     "height": 200,
     "background": "transparent",
+    "autosize": { "type": "fit", "contains": "padding" },
     "data": { "values": fullWeeklyValues },
     "mark": {
       "type": "area",
@@ -304,3 +320,4 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(console.error);
 });
+
