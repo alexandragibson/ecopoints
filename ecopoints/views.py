@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
 from django.db.models.functions import TruncDate
-from .models import CompletedTask, Category, Task, UserProfile
+from ecopoints.models import CompletedTask, Category, Task, UserProfile, LikedCategory
 from django.http import HttpResponse
 from django.views import View
 from collections import defaultdict
@@ -256,9 +256,16 @@ def show_category(request, category_slug):
         category = Category.objects.none()
         tasks = Task.objects.none()
 
+    # Logic to check if user has liked this page
+    liked_category = LikedCategory.objects.filter(user=request.user, category=category)
+    show_like_button = True
+    if liked_category.category.name == category: # Category already liked
+        show_like_button = False
+
     context_dict = {
         'category': category,
-        'tasks': tasks
+        'tasks': tasks,
+        'show_like_button': show_like_button
     }
     return render(request, 'ecopoints/category.html', context=context_dict)
 
@@ -273,10 +280,12 @@ class LikeCategoryView(View):
             return HttpResponse(-1)
         except ValueError:
             return HttpResponse(-1)
-        UserProfile.liked_category = category
-        UserProfile.liked_category.save()
         category.likes = category.likes + 1
         category.save()
+        # Add category as a liked category for user
+        user_profile = UserProfile.objects.filter(user=request.user)
+        user_profile.liked_categories = category
+        user_profile.save()
         return HttpResponse(category.likes)
 
 

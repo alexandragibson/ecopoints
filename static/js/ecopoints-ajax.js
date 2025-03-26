@@ -8,7 +8,7 @@ $(document).ready(function() {
         {'category_id': categoryIdVar},
         function(data) {
             $('#like_count').html(data);
-            $('#like_btn').hide();
+            $('#like_btn').html('Liked');
         })
     });
 });

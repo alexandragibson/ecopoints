@@ -15,6 +15,7 @@
              style="max-height: 400px; width: 100%; object-fit: cover" />
         <h1>{{ category.name }}</h1>
         <br />
+        {% if show_like_button %}
         <div>
             <button id="like_btn"
                     data-categoryid="{{ category.id }}"
@@ -24,10 +25,10 @@
                 Like category
             </button>
             <br />
-            Liked by <strong id="like_count">{{ category.likes }}</strong> ecopals
         </div>
+        {% endif %}
+        <div>Liked by <strong id="like_count">{{ category.likes }}</strong> ecopals</div>
         <p>{{ category.description }}</p>
-
         <h2>Tasks</h2>
         {% if tasks %}
             <ul class="ep-list row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">

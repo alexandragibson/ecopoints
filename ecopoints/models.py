@@ -18,8 +18,6 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        if self.liked < 0:
-            self.liked = 0
         super(Category, self).save(*args, **kwargs)
 
 
@@ -56,7 +54,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # A user's liked categories
-    liked_category = models.ManyToManyField(Category)
+    liked_categories = models.ManyToManyField(Category)
 
     class Meta:
         app_label = 'ecopoints'
