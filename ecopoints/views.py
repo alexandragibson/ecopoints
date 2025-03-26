@@ -7,10 +7,12 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
 from django.db.models.functions import TruncDate
-from ecopoints.models import CompletedTask, Category, Task, UserProfile
+from ecopoints.models import CompletedTask, Category, Task, LikedCategory, UserProfile
 from django.http import HttpResponse
 from django.views import View
 from collections import defaultdict
+#from ecopoints.forms import UserProfileForm
+from django.urls import reverse
 
 
 def index(request):
@@ -256,37 +258,34 @@ def show_category(request, category_slug):
         category = Category.objects.none()
         tasks = Task.objects.none()
 
-    # Logic to check if user has liked this page
-    user_profile = UserProfile.objects.filter(user=request.user, category=category)
-    show_like_button = True
-    if user_profile.category.name == category: # Category already liked
-        show_like_button = False
+    #Logic to check if user has liked this page
+    try:
+        liked_category = LikedCategory.objects.filter(user=request.user, category=category)
+    except LikedCategory.DoesNotExist:
+        liked_category = LikedCategory.objects.none()
 
     context_dict = {
         'category': category,
         'tasks': tasks,
-        'show_like_button': show_like_button
+        'liked_category': liked_category
     }
     return render(request, 'ecopoints/category.html', context=context_dict)
 
 
-class LikeCategoryView(View):
-    @login_required(login_url='/accounts/login/')
-    def get(self, request):
-        category_id = request.GET['category_id']
-        try:
-            category = Category.objects.get(id=int(category_id))
-        except Category.DoesNotExist:
-            return HttpResponse(-1)
-        except ValueError:
-            return HttpResponse(-1)
-        category.likes = category.likes + 1
-        category.save()
-        # Add category as a liked category for user
-        user_profile = UserProfile.objects.filter(user=request.user)
-        user_profile.liked_categories = category
-        user_profile.save()
-        return HttpResponse(category.likes)
+@login_required(login_url='/accounts/login/')
+def like_category(request):
+    category_id = request.GET['category_id']
+    try:
+        category = Category.objects.get(id=int(category_id))
+    except Category.DoesNotExist:
+        return redirect('ecopoints:dashboard')
+    except ValueError:
+        return redirect('ecopoints:dashboard')
+    category.likes = category.likes + 1
+    category.save()
+    # Create a LikedCategory record for the logged-in user
+    LikedCategory.objects.create(user=request.user, category=category)
+    return HttpResponse(category.likes)
 
 
 @login_required(login_url='/accounts/login/')
@@ -300,9 +299,27 @@ def complete_task(request, task_id):
                 return redirect('ecopoints:dashboard')
 
             # Create a CompletedTask record for the logged-in user
-            CompletedTask.objects.create(user=request.user, category=category)
+            CompletedTask.objects.create(user=request.user, task=task)
         return redirect('ecopoints:dashboard')
     else:
         # If someone navigates here with GET, just redirect to dashboard
         return redirect('ecopoints:dashboard')
 
+
+'''@login_required(login_url='/accounts/login/')
+def register_profile(request):
+    form = UserProfileForm()
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+
+            return redirect(reverse('ecopoints:index'))
+    else:
+        print(form.errors)
+    context_dict = {'form': form}
+    return render(request, 'ecopoints/profile_registration.html', context_dict)'''

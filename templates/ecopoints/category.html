@@ -15,7 +15,8 @@
              style="max-height: 400px; width: 100%; object-fit: cover" />
         <h1>{{ category.name }}</h1>
         <br />
-        {% if show_like_button %}
+        <!--ajax related working starts-->
+        {% if liked_category is False %}
         <div>
             <button id="like_btn"
                     data-categoryid="{{ category.id }}"
@@ -28,6 +29,7 @@
         </div>
         {% endif %}
         <div>Liked by <strong id="like_count">{{ category.likes }}</strong> ecopals</div>
+        <!--ajax related working ends-->
         <p>{{ category.description }}</p>
         <h2>Tasks</h2>
         {% if tasks %}
