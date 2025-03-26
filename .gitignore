@@ -13,4 +13,5 @@ notes.md
 
 # assets folder
 assets/*
-staticfiles/
+
+.coverage

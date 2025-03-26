@@ -1,4 +1,4 @@
-//$(document).ready(function()) {
+$(document).ready(function() {
 
     hover_colour = '#62a162';
 
@@ -18,4 +18,4 @@
             $(this).css('color', 'white');
     });
 
-//});
+});
