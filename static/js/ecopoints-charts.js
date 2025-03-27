@@ -101,7 +101,11 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
         "field": "points",
         "type": "quantitative",
         "scale": {"range": [20, 500]},
-        "legend": null
+        "legend": {
+          "symbolSize": 0,
+          "labelFontSize": 0,
+          "title": ""
+        }
       },
       "color": {
         "field": "category",
