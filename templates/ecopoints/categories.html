@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1 class="my-5">My categories</h1>
+    <h1 class="my-5">Categories</h1>
     <hr />
-    {% if liked_categories %}
+    {% if categories %}
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 my-3">
             {% for category in categories %}
                 <div class="col">
@@ -26,7 +26,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <strong>No liked categories.</strong>
+        <strong>There are no categories present.</strong>
     {% endif %}
 {% endblock %}
 

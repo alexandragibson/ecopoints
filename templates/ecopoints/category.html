@@ -15,19 +15,20 @@
              style="max-height: 400px; width: 100%; object-fit: cover" />
         <h1>{{ category.name }}</h1>
         <br />
-        <div>
-            <button id="like_btn"
-                    data-categoryid="{{ category.id }}"
-                    class="btn btn-primary btm-sm"
-                    type="button">
-                <span data-feather="thumbs-up"></span>
-                Like category
+        <!--ajax related working starts-->
+        <div style="display: flex; gap: 1rem; align-items: center">
+            <button
+                id="like_btn"
+                data-url="{% url 'ecopoints:like_category' category.slug %}"
+                data-liked="{% if liked_category %}true{% else %}false{% endif %}"
+                class="btn btn-primary btn-sm"
+                type="button">
+                {% if liked_category %}Liked{% else %}Like{% endif %}
             </button>
-            <br />
-            Liked by <strong id="like_count">{{ category.likes }}</strong> ecopals
+            <div id="like_count">{{ category.likes }} Likes</div>
         </div>
+        <!--ajax related working ends-->
         <p>{{ category.description }}</p>
-
         <h2>Tasks</h2>
         {% if tasks %}
             <ul class="ep-list row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
@@ -67,4 +68,8 @@
         </div>
     </div>
     <br />
+{% endblock %}
+
+{% block scripts_block %}
+    <script src="{% static 'js/ecopoints-ajax.js' %}" crossorigin="anonymous"></script>
 {% endblock %}

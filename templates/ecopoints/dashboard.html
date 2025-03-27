@@ -46,7 +46,7 @@
         </div>
     </div>
     <hr />
-    <h2 class="my-3">Categories</h2>
+    <h2 class="my-3">Liked Categories</h2>
     {% if categories %}
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-5">
             {% for category in categories %}
@@ -66,7 +66,9 @@
             {% endfor %}
         </div>
     {% else %}
-        <strong>There are no categories present.</strong>
+        <strong>There are no categories present.
+            <a href="{% url 'ecopoints:categories' %}">View categories.</a>
+        </strong>
     {% endif %}
     <hr />
     <h2 class="my-3">Recently Completed Tasks</h2>

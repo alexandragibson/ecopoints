@@ -51,6 +51,7 @@ LOGIN_URL = 'auth_login'  # URL users are directed to when not logged in
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'registration',  # For using the registration app from django-registration-redux package
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -58,7 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'compressor',
     'ecopoints',
-    'registration',  # For using the registration app from django-registration-redux package
 ]
 
 MIDDLEWARE = [
@@ -105,7 +105,7 @@ sslmode = query_params.get("sslmode", ["require"])[0]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.lstrip('/'),
+        'NAME': tmpPostgres.path.replace('/', ''),
         'USER': tmpPostgres.username,
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
@@ -170,4 +170,3 @@ COMPRESS_ROOT = STATIC_ROOT
 # Media files (uploaded by admins or users)
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
-

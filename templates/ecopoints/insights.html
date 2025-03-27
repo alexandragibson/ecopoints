@@ -84,8 +84,8 @@
             }
         }
 
-        /* Bubble plot: dynamic re-sizing  */
-        #bubble-plot canvas {
+        #bubble-chart svg,
+        #stacked-bar-chart svg {
             max-width: 100% !important;
             height: auto !important;
             display: block;
@@ -93,7 +93,7 @@
         }
 
         /* Donut chart: dynamic re-sizing */
-        #donut-chart canvas {
+        #donut-chart svg {
             max-width: 100% !important;
             height: auto !important;
             display: block;
@@ -101,11 +101,33 @@
         }
 
         /* Weekly graph: dynamic re-sizing */
-        #weekly-graph canvas {
+        #weekly-graph svg {
             max-width: 100% !important;
             height: auto !important;
             display: block;
             margin: 0 auto;
+        }
+
+        /* Match carousel arrow with theme border color */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            filter: invert(1) brightness(0.5);
+            background-color: var(--bs-border-color);
+            border-radius: 50%;
+            padding: 1rem;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: auto;
+            padding: 0 1rem;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            top: 45%;
+            transform: translateY(-50%);
+            z-index: 2;
         }
 
     </style>
@@ -130,7 +152,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            Explore your daily, weekly, and monthly ecopoints. Click on chart elements for more details!
+                            Explore your daily, weekly, and monthly ecopoints. Hover over the charts for more details!
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
@@ -146,17 +168,42 @@
                 });
             </script>
 
-            <!-- MONTHLY TOTALS SECTION -->
+            <!-- CHARTS CAROUSEL SECTION -->
             <section class="row mb-4">
-                <div class="col-12 mb-4">
-                    <h2 class="my-3">Monthly Totals</h2>
-                    <div class="card">
-                        <div class="card-body d-flex justify-content-center align-items-center">
-                            <div id="bubble-plot" class="w-100" style="max-width: 1000px;"></div>
+                <div class="col-12">
+                    <div class="card mb-5 theme-border">
+                        <div class="card-header">
+                            Monthly Totals
+                        </div>
+                        <div class="card-body">
+                            <div id="chartCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+                                            <div id="bubble-chart" style="width: 100%; max-width: 1000px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+                                            <div id="stacked-bar-chart" style="width: 100%; max-width: 1000px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#chartCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#chartCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
+
+
 
             <!-- TOP CATEGORY HIGHLIGHT -->
             <section class="row">
@@ -266,9 +313,11 @@
     <script>
         window.ecopointsData = {
             latest_month: {{ latest_month|default:"null" }},
-            daily_points: {{ daily_points }},
-            weekly_data: {{ weekly_data|safe }},
-            annual_points: {{ annual_points|safe }}
+            daily_points: {{ daily_points|default:0 }},
+            weekly_data: {{ weekly_data|safe|default:"[]" }},
+            annual_points: {{ annual_points|safe|default:"[]" }},
+            bubble_chart_data: {{ bubble_chart_data|safe }},
+            bar_chart_data: {{ bar_chart_data|safe }}
         };
     </script>
 
@@ -277,5 +326,28 @@
         import { renderAllCharts } from "/static/js/ecopoints-charts.js";
         renderAllCharts(window.ecopointsData);
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const carousel = document.getElementById("chartCarousel");
+
+            carousel.addEventListener("slid.bs.carousel", function (event) {
+                const activeIndex = event.to;
+
+                if (activeIndex === 0) {
+                    // Re-render bubble chart
+                    import("/static/js/ecopoints-charts.js").then(module => {
+                        module.renderBubbleChart(window.ecopointsData.bubble_chart_data);
+                    });
+                } else if (activeIndex === 1) {
+                    // Re-render stacked bar chart
+                    import("/static/js/ecopoints-charts.js").then(module => {
+                        module.renderStackedBarChart(window.ecopointsData.bar_chart_data);
+                    });
+                }
+            });
+        });
+    </script>
+
 {% endblock %}
 

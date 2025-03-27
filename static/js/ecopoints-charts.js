@@ -15,24 +15,26 @@ export function renderAllCharts(data) {
     points: d.points
   }));
 
-  renderDonutChart("#donut-chart", daily_points);
-  renderWeeklyChart(weekly_data);
+  // Render donut chart if available
+  if (typeof daily_points !== "undefined") {
+    renderDonutChart("#donut-chart", daily_points);
+  }
 
-  fetch(`/ecopoints/bubble-data/${latest_month}/`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.bubble_data?.length > 0) {
-        renderBubbleAndBarCharts(data.bubble_data, annualData);
-      } else {
-        document.getElementById("bubble-plot").innerHTML = "<p>No data available for this month.</p>";
-      }
-    })
-    .catch(err => {
-      console.error("Bubble chart fetch error:", err);
-      document.getElementById("bubble-plot").innerHTML = "<p>Error loading chart.</p>";
-    });
+  // Render weekly line area chart
+  if (Array.isArray(weekly_data)) {
+    renderWeeklyChart(weekly_data);
+  }
+
+  // Render current month's bubble chart
+  if (Array.isArray(data.bubble_chart_data)) {
+    renderBubbleChart(data.bubble_chart_data);
+  }
+
+  // Render stacked bar chart for categories by month
+  if (Array.isArray(data.bar_chart_data)) {
+    renderStackedBarChart(data.bar_chart_data);
+  }
 }
-
 
 //*------------------------------------------------------------*
 // BACKGROUND & FONT COLOURS
@@ -46,26 +48,19 @@ export function getThemeStyles() {
   };
 }
 
+//*------------------------------------------------------------*
+// BUBBLE PLOT
+//*------------------------------------------------------------*
 
-//*------------------------------------------------------------*
-// BUBBLE PLOT & HISTOGRAM (VERTICALLY STACKED)
-//*------------------------------------------------------------*
-export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
+export function renderBubbleChart(data) {
   const themeStyles = getThemeStyles();
 
-  const baseAutosize = {
-    "type": "fit",
-    "resize": true,
-    "contains": "padding"
-  };
-
-  const bubblePlot = {
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "width": "container",
     "height": 300,
     "background": "transparent",
-    "align": "center",
-    "autosize": baseAutosize,
-    "data": { "values": bubbleData },
+    "data": { "values": data },
     "mark": "circle",
     "encoding": {
       "x": {
@@ -78,7 +73,7 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
         }
       },
       "y": {
-        "field": "category",
+        "field": "task__category__name",
         "type": "nominal",
         "axis": {
           "title": "Category",
@@ -89,90 +84,77 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
       "size": {
         "field": "points",
         "type": "quantitative",
-        "scale": {"range": [20, 500]},
+        "scale": { "range": [10, 500] },
         "legend": null
       },
       "color": {
-        "field": "category",
+        "field": "task__category__name",
         "type": "nominal",
-        "scale": { "scheme": "category20" },
-        "legend": {
-          "title": null,
-          "labelExpr": "''",
-          "symbolSize": 0
-        }
+        "legend": null
       },
       "tooltip": [
         { "field": "day", "type": "ordinal", "title": "Day" },
-        { "field": "category", "type": "nominal", "title": "Category" },
-        { "field": "points", "type": "quantitative", "title": "Total ecopoints" }
+        { "field": "task__category__name", "type": "nominal", "title": "Category" },
+        { "field": "points", "type": "quantitative", "title": "ecopoints" }
       ]
     }
   };
 
-  const annualHistogram = {
+  vegaEmbed("#bubble-chart", spec, { actions: false });
+}
+
+//*------------------------------------------------------------*
+// STACKED BAR CHART
+//*------------------------------------------------------------*
+
+export function renderStackedBarChart(data) {
+  const themeStyles = getThemeStyles();
+
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "width": "container",
-    "height": 150,
+    "height": 300,
     "background": "transparent",
-    "align": "center",
-    "autosize": baseAutosize,
-    "mark": "bar",
+    "data": { "values": data },
+    "mark": { "type": "bar", "cornerRadiusTopLeft": 3, "cornerRadiusTopRight": 3 },
     "encoding": {
       "x": {
-        "field": "points",
-        "type": "quantitative",
-        "axis": {
-          "title": "ecopoints",
-          "labelColor": themeStyles.textColor,
-          "titleColor": themeStyles.textColor
-        }
-      },
-      "y": {
         "field": "month",
         "type": "ordinal",
-        "sort": [
-          "January", "February", "March", "April", "May", "June",
-          "July", "August", "September", "October", "November", "December"
-        ],
         "axis": {
           "title": "Month",
           "labelColor": themeStyles.textColor,
           "titleColor": themeStyles.textColor
         }
       },
+      "y": {
+        "field": "points",
+        "type": "quantitative",
+        "aggregate": "sum",
+        "axis": {
+          "title": "ecopoints",
+          "labelColor": themeStyles.textColor,
+          "titleColor": themeStyles.textColor
+        }
+      },
       "color": {
-        "field": "month",
+        "field": "task__category__name",
         "type": "nominal",
         "legend": {
-          "title": null,
-          "labelExpr": "''",
-          "symbolSize": 0
+          "title": "Category",
+          "labelColor": themeStyles.textColor,
+          "titleColor": themeStyles.textColor
         }
       },
       "tooltip": [
         { "field": "month", "type": "ordinal", "title": "Month" },
-        { "field": "points", "type": "quantitative", "title": "Total ecopoints" }
+        { "field": "task__category__name", "type": "nominal", "title": "Category" },
+        { "field": "points", "type": "quantitative", "title": "ecopoints" }
       ]
     }
   };
 
-  const combinedSpec = {
-    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "vconcat": [bubblePlot, annualHistogram],
-    "spacing": 50,
-    "autosize": baseAutosize,
-    "config": {
-      "background": "transparent",
-      "title": { "color": themeStyles.textColor }
-    }
-  };
-
-  vegaEmbed("#bubble-plot", combinedSpec, {
-    actions: false,
-    renderer: "canvas",
-    container: "#bubble-plot",
-    defaultStyle: true
-  });
+  vegaEmbed("#stacked-bar-chart", spec, { actions: false });
 }
 
 
@@ -184,10 +166,9 @@ export function renderDonutChart(targetId, dailyPoints, goal = 50) {
 
   const donutSpec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": "container",
+    "width": "250",
     "height": 250,
     "background": "transparent",
-    "autosize": { "type": "fit", "contains": "padding"},
     "description": "Daily points donut chart",
     "data": {
       "values": [
@@ -248,10 +229,9 @@ export function renderWeeklyChart(weeklyData) {
 
   const weeklySpec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": "container",
-    "height": 200,
+    "width": "300",
+    "height": 250,
     "background": "transparent",
-    "autosize": { "type": "fit", "contains": "padding" },
     "data": { "values": fullWeeklyValues },
     "mark": {
       "type": "area",
