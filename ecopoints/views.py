@@ -5,9 +5,8 @@ from datetime import datetime
 from django.db.models.functions import ExtractMonth, ExtractDay
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
-from .models import CompletedTask, Category, Task, UserProfile
-from django.http import HttpResponse
-from django.views import View
+from ecopoints.models import CompletedTask, Category, Task, LikedCategory
+from django.http import HttpResponse, JsonResponse
 from collections import defaultdict
 
 
@@ -100,7 +99,7 @@ def insights(request):
         days_with_tasks = monthly_completed_tasks.values('completed_at__date').distinct().count()
         total_completed_tasks = monthly_completed_tasks.count()
 
-        points_dict = defaultdict(lambda:0)
+        points_dict = defaultdict(lambda: 0)
         for entry in monthly_points_data:
             points_dict[entry["month"]] = entry["total_points"]
 
@@ -111,7 +110,7 @@ def insights(request):
         'weekly_data': weekly_data,
         'days_with_tasks': days_with_tasks,
         'total_completed_tasks': total_completed_tasks,
-        'current_month' : current_month,
+        'current_month': current_month,
         'is_authenticated': user.is_authenticated,
         'top_category': top_category,
         'top_category_points': top_category_points,
@@ -138,10 +137,15 @@ def get_weekly_data(user):
 def dashboard(request):
     user = request.user
     today = make_date_timezone_aware(datetime.now().date())
-    category_list = Category.objects.all()
     task_list = Task.objects.all()
     completed_tasks = CompletedTask.objects.filter(user=request.user).order_by('-completed_at')
     completed_today = CompletedTask.objects.filter(user=request.user, completed_at__date=today)
+
+    # get all liked categories
+    liked_categories = LikedCategory.objects.filter(user=request.user)
+    category_list = []
+    for liked_category in liked_categories:
+        category_list.append(liked_category.category)
 
     # Get the 5 most recent completed tasks
     # sqlLite does not support DISTINCT
@@ -214,6 +218,7 @@ def categories(request):
 
 @login_required(login_url='/accounts/login/')
 def show_category(request, category_slug):
+    print('im here')
     try:
         category = Category.objects.get(slug=category_slug)
         tasks = Task.objects.filter(category=category)
@@ -221,28 +226,45 @@ def show_category(request, category_slug):
         category = Category.objects.none()
         tasks = Task.objects.none()
 
+    # Logic to check if user has liked this page
+    try:
+        liked_category = LikedCategory.objects.filter(user=request.user, category=category)
+    except LikedCategory.DoesNotExist:
+        liked_category = None
+
+    count_of_like = LikedCategory.objects.filter(category=category).count()
+    category.likes = count_of_like
+
     context_dict = {
         'category': category,
-        'tasks': tasks
+        'tasks': tasks,
+        'liked_category': liked_category
     }
     return render(request, 'ecopoints/category.html', context=context_dict)
 
 
-class LikeCategoryView(View):
-    @login_required(login_url='/accounts/login/')
-    def get(self, request):
-        category_id = request.GET['category_id']
-        try:
-            category = Category.objects.get(id=int(category_id))
-        except Category.DoesNotExist:
-            return HttpResponse(-1)
-        except ValueError:
-            return HttpResponse(-1)
-        UserProfile.liked_category = category
-        UserProfile.liked_category.save()
-        category.likes = category.likes + 1
-        category.save()
-        return HttpResponse(category.likes)
+@login_required(login_url='/accounts/login/')
+def like_category(request, category_slug):
+    try:
+        category = Category.objects.get(slug=category_slug)
+    except Category.DoesNotExist:
+        return JsonResponse({'error': 'Category not found'}, status=404)
+
+    if request.method == 'POST':
+        # Like the category
+        LikedCategory.objects.get_or_create(user=request.user, category=category)
+
+
+    elif request.method == 'DELETE':
+        # Unlike the category
+        LikedCategory.objects.filter(user=request.user, category=category).delete()
+
+
+    else:
+        return JsonResponse({'error': 'Invalid method'}, status=400)
+
+    like_count = LikedCategory.objects.filter(category=category).count()
+    return HttpResponse(like_count)
 
 
 @login_required(login_url='/accounts/login/')
@@ -261,4 +283,3 @@ def complete_task(request, task_id):
     else:
         # If someone navigates here with GET, just redirect to dashboard
         return redirect('ecopoints:dashboard')
-

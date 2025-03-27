@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
@@ -10,7 +9,6 @@ class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     banner = models.ImageField(upload_to='category_images', blank=True, default='category_images/default.jpg')
-    likes = models.IntegerField(default=0)
     slug = models.SlugField(unique=True)
 
     class Meta:
@@ -19,8 +17,6 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        if self.liked < 0:
-            self.liked = 0
         super(Category, self).save(*args, **kwargs)
 
 
@@ -51,17 +47,14 @@ class CompletedTask(models.Model):
         return f"{self.user.username} completed {self.task.name}"
 
 
-class UserProfile(models.Model):
-
-    # Link a UserProfile to a User model instance:
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # A user's liked categories
-    liked_category = models.ManyToManyField(Category)
+class LikedCategory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
+        verbose_name_plural = 'LikedCategories'
         app_label = 'ecopoints'
+        unique_together = ('user', 'category')
 
-    # Return username value when a String representation of the user is needed
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} liked {self.category.name}"
