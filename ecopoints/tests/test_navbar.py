@@ -35,6 +35,11 @@ class NavBarAuthTests(TestCase):
     def test_navbar_left_links_present(self):
             # Test that the navbar contains links for Home, Insights, Dashboard, and Categories.
             response = self.client.get(reverse('ecopoints:index'))
+
+            # Register link
+            register_url = reverse('registration_register')
+            self.assertContains(response, f'href="{register_url}"')
+            self.assertContains(response, '>Register<')
             
             # Home link
             home_url = reverse('ecopoints:index')
