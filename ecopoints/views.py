@@ -81,12 +81,12 @@ def insights(request):
 
         # Find the top scoring category this month
         top_category_data = (
-                    monthly_completed_tasks
-                    .values('task__category__name')
-                    .annotate(total=Sum('task__score'))
-                    .order_by('-total')
-                    .first()
-                )
+            monthly_completed_tasks
+            .values('task__category__name')
+            .annotate(total=Sum('task__score'))
+            .order_by('-total')
+            .first()
+        )
 
         if top_category_data:
             top_category = top_category_data['task__category__name']
@@ -218,7 +218,6 @@ def categories(request):
 
 @login_required(login_url='/accounts/login/')
 def show_category(request, category_slug):
-    print('im here')
     try:
         category = Category.objects.get(slug=category_slug)
         tasks = Task.objects.filter(category=category)

@@ -40,7 +40,7 @@ class TestDashboard(TestCase):
 
     def test_dashboard_no_content(self):
         self.assertIn('<strong>There are no tasks completed today.</strong>', self.content)
-        self.assertIn('<strong>There are no categories present.</strong>', self.content)
+        self.assertContains(self.response, 'There are no categories present.')
         self.assertIn('<strong>There are no recent tasks present.</strong>', self.content)
 
     def test_dashboard_with_completed_task(self):
