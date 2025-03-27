@@ -3,10 +3,8 @@ from django.db.models import Sum
 from django.shortcuts import render, redirect
 from datetime import datetime
 from django.db.models.functions import ExtractMonth, ExtractDay
-from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
-from django.db.models.functions import TruncDate
 from .models import CompletedTask, Category, Task, UserProfile
 from django.http import HttpResponse
 from django.views import View
@@ -35,19 +33,21 @@ def insights(request):
     today = make_date_timezone_aware(datetime.now().date())
     current_month = datetime.now().strftime("%B")
 
-    # using weekday() method to calculate the start of the week (Mon)
-    # weekday() returns 0 for Mon and 6 for Sun
+    # Calculate time ranges
     start_of_week = today.replace(day=today.day - today.weekday())
     start_of_month = today.replace(day=1)
     start_of_year = today.replace(month=1, day=1)
 
     if user.is_authenticated:
+        # Aggregate user scores for given time ranges
         daily_points = calculate_points(user, today)
         weekly_points = calculate_points(user, start_of_week)
         monthly_points = calculate_points(user, start_of_month)
 
+        # Weekly data for line/area chart
         weekly_data = get_weekly_data(user)
 
+        # Get total points per month for the year
         monthly_points_data = (
             CompletedTask.objects.filter(user=user, completed_at__gte=start_of_year)
             .annotate(month=ExtractMonth('completed_at'))
@@ -56,19 +56,38 @@ def insights(request):
             .order_by('month')
         )
 
+        # Get all tasks completed this month
         monthly_completed_tasks = CompletedTask.objects.filter(
             user=user,
             completed_at__month=start_of_month.month,
             completed_at__year=start_of_month.year
         )
 
-        top_category_data = (
+        # Bubble chart data (day, category, total points)
+        bubble_chart_data = list(
             monthly_completed_tasks
-            .values('task__category__name')
-            .annotate(total=Sum('task__score'))
-            .order_by('-total')
-            .first()
+            .annotate(day=ExtractDay('completed_at'))
+            .values('day', 'task__category__name')
+            .annotate(points=Sum('task__score'))
         )
+
+        # Stacked bar data (month, category, total points)
+        bar_chart_data = list(
+            CompletedTask.objects
+            .filter(user=user, completed_at__year=start_of_year.year)
+            .annotate(month=ExtractMonth('completed_at'))
+            .values('month', 'task__category__name')
+            .annotate(points=Sum('task__score'))
+        )
+
+        # Find the top scoring category this month
+        top_category_data = (
+                    monthly_completed_tasks
+                    .values('task__category__name')
+                    .annotate(total=Sum('task__score'))
+                    .order_by('-total')
+                    .first()
+                )
 
         if top_category_data:
             top_category = top_category_data['task__category__name']
@@ -77,7 +96,7 @@ def insights(request):
             top_category = "N/A"
             top_category_points = 0
 
-
+        # Get summary stats
         days_with_tasks = monthly_completed_tasks.values('completed_at__date').distinct().count()
         total_completed_tasks = monthly_completed_tasks.count()
 
@@ -85,70 +104,25 @@ def insights(request):
         for entry in monthly_points_data:
             points_dict[entry["month"]] = entry["total_points"]
 
-        annual_points = [{"month": month, "points": points_dict[month]} for month in range(1, 13)]
-
-        latest_month = (
-            CompletedTask.objects.filter(user=user)
-            .annotate(month=ExtractMonth('completed_at'))
-            .values_list('month', flat=True)
-            .order_by('-month')
-            .first()
-        )
-
-        if latest_month:
-            bubble_plot_data = (
-                CompletedTask.objects.filter(user=user, completed_at__month=latest_month)
-                .annotate(day=ExtractDay('completed_at'))  # Extract day instead of month
-                .values('day', 'task__category__name')  # Group by day & category
-                .annotate(total_points=Sum('task__score'))  # Sum points per category per day
-                .order_by('day', 'task__category__name')
-            )
-
-            bubble_data = [
-                {"day": entry["day"], "category": entry["task__category__name"], "points": entry["total_points"]}
-                for entry in bubble_plot_data
-            ]
-        else:
-            bubble_data = []
-
-    else:
-        daily_points = weekly_points = monthly_points = 0
-        annual_points = []
-        bubble_data = []
-
     context = {
         'daily_points': daily_points,
         'weekly_points': weekly_points,
         'monthly_points': monthly_points,
-        'annual_points': annual_points,
-        'bubble_data': bubble_data,
-        'latest_month': latest_month,
         'weekly_data': weekly_data,
         'days_with_tasks': days_with_tasks,
         'total_completed_tasks': total_completed_tasks,
         'current_month' : current_month,
         'is_authenticated': user.is_authenticated,
         'top_category': top_category,
-        'top_category_points': top_category_points
+        'top_category_points': top_category_points,
+        'bubble_chart_data': bubble_chart_data,
+        'bar_chart_data': bar_chart_data
     }
 
     return render(request, 'ecopoints/insights.html', context)
 
 
-def get_bubble_data_for_month(user, month):
-    bubble_plot_data = (
-        CompletedTask.objects.filter(user=user, completed_at__month=month)
-        .annotate(day=ExtractDay('completed_at'))
-        .values('day', 'task__category__name')
-        .annotate(total_points=Sum('task__score'))
-        .order_by('day', 'task__category__name')
-    )
-
-    return [
-        {"day": entry["day"], "category": entry["task__category__name"], "points": entry["total_points"]}
-        for entry in bubble_plot_data
-    ]
-
+# Get weekly ecopoints grouped by day of the week
 def get_weekly_data(user):
     weekday_data = (
         CompletedTask.objects.filter(user=user, completed_at__week=timezone.now().isocalendar()[1])
@@ -158,15 +132,6 @@ def get_weekly_data(user):
         .order_by('weekday')
     )
     return [{"day": d["weekday"], "points": d["total_points"]} for d in weekday_data]
-
-
-def get_bubble_data(request, month):
-    user = request.user
-    if user.is_authenticated:
-        bubble_data = get_bubble_data_for_month(user, month)
-    else:
-        bubble_data = []
-    return JsonResponse({"bubble_data": bubble_data})
 
 
 @login_required(login_url='/accounts/login/')

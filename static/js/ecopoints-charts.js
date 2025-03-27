@@ -15,36 +15,24 @@ export function renderAllCharts(data) {
     points: d.points
   }));
 
-  console.log("Chart data:", data);
-  console.log("Annual points data:", data.annual_points);
-  console.log("Annual Vega data:", annualData);
-
-  // Prevent crash if donut or weekly data is missing
+  // Render donut chart if available
   if (typeof daily_points !== "undefined") {
     renderDonutChart("#donut-chart", daily_points);
   }
 
+  // Render weekly line area chart
   if (Array.isArray(weekly_data)) {
     renderWeeklyChart(weekly_data);
   }
 
-  // Only run bubble plot if latest_month is valid
-  if (latest_month) {
-    fetch(`/ecopoints/bubble-data/${latest_month}/`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.bubble_data?.length > 0) {
-          renderBubbleAndBarCharts(data.bubble_data, annualData);
-        } else {
-          document.getElementById("bubble-plot").innerHTML = "<p>No data available for this month.</p>";
-        }
-      })
-      .catch(err => {
-        console.error("Bubble chart fetch error:", err);
-        document.getElementById("bubble-plot").innerHTML = "<p>Error loading chart.</p>";
-      });
-  } else {
-    document.getElementById("bubble-plot").innerHTML = "<p>No data available for this month.</p>";
+  // Render current month's bubble chart
+  if (Array.isArray(data.bubble_chart_data)) {
+    renderBubbleChart(data.bubble_chart_data);
+  }
+
+  // Render stacked bar chart for categories by month
+  if (Array.isArray(data.bar_chart_data)) {
+    renderStackedBarChart(data.bar_chart_data);
   }
 }
 
@@ -60,24 +48,20 @@ export function getThemeStyles() {
   };
 }
 
+//*------------------------------------------------------------*
+// BUBBLE PLOT
+//*------------------------------------------------------------*
 
-//*------------------------------------------------------------*
-// BUBBLE PLOT & HISTOGRAM (VERTICALLY STACKED)
-//*------------------------------------------------------------*
-export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
+export function renderBubbleChart(data) {
   const themeStyles = getThemeStyles();
 
-  const bubblePlot = {
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "width": "container",
     "height": 300,
     "background": "transparent",
-    "align": "center",
-    "data": { "values": bubbleData },
-    "mark": {
-      "type": "circle",
-      "cursor": "pointer",
-      "filled": true
-    },
+    "data": { "values": data },
+    "mark": "circle",
     "encoding": {
       "x": {
         "field": "day",
@@ -89,7 +73,7 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
         }
       },
       "y": {
-        "field": "category",
+        "field": "task__category__name",
         "type": "nominal",
         "axis": {
           "title": "Category",
@@ -100,134 +84,79 @@ export function renderBubbleAndBarCharts(bubbleData, annualPointsData) {
       "size": {
         "field": "points",
         "type": "quantitative",
-        "scale": {"range": [20, 500]},
-        "legend": {
-          "symbolSize": 0,
-          "labelFontSize": 0,
-          "title": ""
-        }
+        "scale": { "range": [10, 500] },
+        "legend": null
       },
       "color": {
-        "field": "category",
+        "field": "task__category__name",
         "type": "nominal",
-        "scale": { "scheme": "category20" },
-        "legend": {
-          "title": null,
-          "labelExpr": "''",
-          "symbolSize": 0
-        }
+        "legend": null
       },
       "tooltip": [
         { "field": "day", "type": "ordinal", "title": "Day" },
-        { "field": "category", "type": "nominal", "title": "Category" },
-        { "field": "points", "type": "quantitative", "title": "Total ecopoints" }
+        { "field": "task__category__name", "type": "nominal", "title": "Category" },
+        { "field": "points", "type": "quantitative", "title": "ecopoints" }
       ]
     }
   };
 
-  const annualHistogram = {
+  vegaEmbed("#bubble-chart", spec, { actions: false });
+}
+
+//*------------------------------------------------------------*
+// STACKED BAR CHART
+//*------------------------------------------------------------*
+
+export function renderStackedBarChart(data) {
+  const themeStyles = getThemeStyles();
+
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "width": "container",
-    "height": 150,
+    "height": 300,
     "background": "transparent",
-    "align": "center",
-    "data": { "values": annualPointsData },
-    "mark": {
-      "type": "bar",
-      "cursor": "pointer",
-      "filled": true
-    },
-    "selection": {
-      "monthSelection": {
-        "type": "single",
-        "fields": ["month"],
-        "on": "click"
-      }
-    },
+    "data": { "values": data },
+    "mark": { "type": "bar", "cornerRadiusTopLeft": 3, "cornerRadiusTopRight": 3 },
     "encoding": {
       "x": {
-        "field": "points",
-        "type": "quantitative",
-        "axis": {
-          "title": "ecopoints",
-          "labelColor": themeStyles.textColor,
-          "titleColor": themeStyles.textColor
-        }
-      },
-      "y": {
         "field": "month",
         "type": "ordinal",
-        "scale": {
-          "domain": [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-          ]
-        },
-        "sort": [
-          "January", "February", "March", "April", "May", "June",
-          "July", "August", "September", "October", "November", "December"
-        ],
         "axis": {
           "title": "Month",
           "labelColor": themeStyles.textColor,
           "titleColor": themeStyles.textColor
         }
       },
+      "y": {
+        "field": "points",
+        "type": "quantitative",
+        "aggregate": "sum",
+        "axis": {
+          "title": "ecopoints",
+          "labelColor": themeStyles.textColor,
+          "titleColor": themeStyles.textColor
+        }
+      },
       "color": {
-        "field": "month",
+        "field": "task__category__name",
         "type": "nominal",
         "legend": {
-          "title": null,
-          "labelExpr": "''",
-          "symbolSize": 0
+          "title": "Category",
+          "labelColor": themeStyles.textColor,
+          "titleColor": themeStyles.textColor
         }
       },
       "tooltip": [
         { "field": "month", "type": "ordinal", "title": "Month" },
-        { "field": "points", "type": "quantitative", "title": "Total ecopoints" }
+        { "field": "task__category__name", "type": "nominal", "title": "Category" },
+        { "field": "points", "type": "quantitative", "title": "ecopoints" }
       ]
     }
   };
 
-  const combinedSpec = {
-    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "vconcat": [bubblePlot, annualHistogram],
-    "spacing": 50,
-    "config": {
-      "background": "transparent",
-      "title": { "color": themeStyles.textColor }
-    }
-  };
-
-  vegaEmbed("#bubble-plot", combinedSpec, {
-    actions: false,
-    renderer: "svg",
-    container: "#bubble-plot",
-    defaultStyle: true
-  }).then(result => {
-    // Register a click handler on the view
-    result.view.addEventListener('click', (event, item) => {
-      if (item && item.mark && item.mark.marktype === 'bar' && item.datum && item.datum.month) {
-        const clickedMonthName = item.datum.month;
-
-        const monthMap = {
-          "January": 1, "February": 2, "March": 3, "April": 4,
-          "May": 5, "June": 6, "July": 7, "August": 8,
-          "September": 9, "October": 10, "November": 11, "December": 12
-        };
-
-        const selectedMonth = monthMap[clickedMonthName];
-        if (selectedMonth) {
-          fetch(`/ecopoints/bubble-data/${selectedMonth}/`)
-            .then(res => res.json())
-            .then(data => {
-              renderBubbleAndBarCharts(data.bubble_data, annualPointsData);  // re-render bubble+bar
-            })
-            .catch(err => console.error("Error fetching bubble data:", err));
-        }
-      }
-    });
-  });
+  vegaEmbed("#stacked-bar-chart", spec, { actions: false });
 }
+
 
 //*------------------------------------------------------------*
 // DONUT CHART
