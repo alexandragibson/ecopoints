@@ -16,7 +16,7 @@
         <h1>{{ category.name }}</h1>
         <br />
         <!--ajax related working starts-->
-        <div>
+        <div style="display: flex; gap: 1rem; align-items: center">
             <button
                 id="like_btn"
                 data-url="{% url 'ecopoints:like_category' category.slug %}"
