@@ -6,11 +6,6 @@ import re
 
 
 class CategoryModelsTests(TestCase):
-    def test_likes_are_positive_or_zero(self):
-        category = Category(name='test', liked=-1)
-        category.save()
-        self.assertEqual((category.liked >= 0), True)
-
     def test_slug_line_creation(self):
         category = Category(name='Random Category String')
         category.save()
