@@ -23,6 +23,6 @@ from ecopoints import views
 urlpatterns = [
                   path('', views.index, name='index'),
                   path('admin/', admin.site.urls),
-                  path('ecopoints/', include('ecopoints.urls')),
                   path('accounts/', include('registration.backends.simple.urls')),  # django-registration-redux links
+                  path('ecopoints/', include('ecopoints.urls')),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

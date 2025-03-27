@@ -151,6 +151,7 @@ def get_bubble_data_for_month(user, month):
         for entry in bubble_plot_data
     ]
 
+
 def get_weekly_data(user):
     weekday_data = (
         CompletedTask.objects.filter(user=user, completed_at__week=timezone.now().isocalendar()[1])
@@ -323,3 +324,7 @@ def register_profile(request):
         print(form.errors)
     context_dict = {'form': form}
     return render(request, 'ecopoints/profile_registration.html', context_dict)'''
+
+
+
+

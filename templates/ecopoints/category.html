@@ -16,7 +16,7 @@
         <h1>{{ category.name }}</h1>
         <br />
         <!--ajax related working starts-->
-        {% if liked_category is False %}
+        <!--{% if liked_category is False %}-->
         <div>
             <button id="like_btn"
                     data-categoryid="{{ category.id }}"
@@ -27,7 +27,7 @@
             </button>
             <br />
         </div>
-        {% endif %}
+        <!--{% endif %}-->
         <div>Liked by <strong id="like_count">{{ category.likes }}</strong> ecopals</div>
         <!--ajax related working ends-->
         <p>{{ category.description }}</p>

@@ -54,6 +54,7 @@ class LikedCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
+        verbose_name_plural = 'LikedCategories'
         app_label = 'ecopoints'
 
     def __str__(self):
