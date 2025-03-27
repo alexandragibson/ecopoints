@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
@@ -48,16 +47,14 @@ class CompletedTask(models.Model):
         return f"{self.user.username} completed {self.task.name}"
 
 
-class UserProfile(models.Model):
-    # Link a UserProfile to a User model instance:
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # A user's liked categories
-    liked_category = models.ManyToManyField(Category)
+class LikedCategory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
+        verbose_name_plural = 'LikedCategories'
         app_label = 'ecopoints'
+        unique_together = ('user', 'category')
 
-    # Return username value when a String representation of the user is needed
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} liked {self.category.name}"

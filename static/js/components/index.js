@@ -32,7 +32,6 @@ const toggleTaskToast = () => {
   const toastElement = document.getElementById('logTaskToast'); // Get the toast
 
   const toast = new bootstrap.Toast(toastElement); // Create a new toast instance
-  // This is highlighting an issues but as long as we have put the bootstrap cdn in the scripts on base.html it works
 
   // Get the elements inside the toast
   const toastTaskName = document.getElementById('toast-task-name');

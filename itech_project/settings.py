@@ -47,6 +47,7 @@ LOGIN_URL = 'auth_login'  # URL users are directed to when not logged in
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'registration',  # For using the registration app from django-registration-redux package
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -54,7 +55,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'compressor',
     'ecopoints',
-    'registration',  # For using the registration app from django-registration-redux package
 ]
 
 MIDDLEWARE = [
