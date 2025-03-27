@@ -225,6 +225,9 @@ def show_category(request, category_slug):
         category = Category.objects.none()
         tasks = Task.objects.none()
 
+    if not category:
+        return render(request, 'ecopoints/category.html', context={'category': category, 'tasks': tasks})
+
     # Logic to check if user has liked this page
     try:
         liked_category = LikedCategory.objects.filter(user=request.user, category=category)
