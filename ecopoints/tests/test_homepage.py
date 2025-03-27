@@ -28,6 +28,6 @@ class HomePageViewTest(TestCase):
         response = self.client.get(reverse('ecopoints:index'))
         self.assertEqual(response.status_code, 200)
         # Confirm the personalized welcome message is displayed.
-        self.assertContains(response, f"Welcome back {self.user.username}!")
+        self.assertContains(response, f"Welcome {self.user.username}!")
         # Confirm that the generic welcome message is not present.
         self.assertNotContains(response, 'Welcome to ecopoints!')
