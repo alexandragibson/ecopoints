@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 class RegistrationTest(TestCase):
-
     def test_registration_form_creates_user_in_db(self):
 
          # Get user registration data

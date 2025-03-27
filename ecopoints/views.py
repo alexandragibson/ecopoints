@@ -6,13 +6,9 @@ from django.db.models.functions import ExtractMonth, ExtractDay
 from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
-from django.db.models.functions import TruncDate
-from ecopoints.models import CompletedTask, Category, Task, LikedCategory, UserProfile
+from ecopoints.models import CompletedTask, Category, Task, LikedCategory
 from django.http import HttpResponse
-from django.views import View
 from collections import defaultdict
-#from ecopoints.forms import UserProfileForm
-from django.urls import reverse
 
 
 def index(request):
@@ -79,11 +75,10 @@ def insights(request):
             top_category = "N/A"
             top_category_points = 0
 
-
         days_with_tasks = monthly_completed_tasks.values('completed_at__date').distinct().count()
         total_completed_tasks = monthly_completed_tasks.count()
 
-        points_dict = defaultdict(lambda:0)
+        points_dict = defaultdict(lambda: 0)
         for entry in monthly_points_data:
             points_dict[entry["month"]] = entry["total_points"]
 
@@ -128,7 +123,7 @@ def insights(request):
         'weekly_data': weekly_data,
         'days_with_tasks': days_with_tasks,
         'total_completed_tasks': total_completed_tasks,
-        'current_month' : current_month,
+        'current_month': current_month,
         'is_authenticated': user.is_authenticated,
         'top_category': top_category,
         'top_category_points': top_category_points
@@ -176,10 +171,15 @@ def get_bubble_data(request, month):
 def dashboard(request):
     user = request.user
     today = make_date_timezone_aware(datetime.now().date())
-    category_list = Category.objects.all()
     task_list = Task.objects.all()
     completed_tasks = CompletedTask.objects.filter(user=request.user).order_by('-completed_at')
     completed_today = CompletedTask.objects.filter(user=request.user, completed_at__date=today)
+
+    # get all liked categories
+    liked_categories = LikedCategory.objects.filter(user=request.user)
+    category_list = []
+    for liked_category in liked_categories:
+        category_list.append(liked_category.category)
 
     # Get the 5 most recent completed tasks
     # sqlLite does not support DISTINCT
@@ -252,6 +252,7 @@ def categories(request):
 
 @login_required(login_url='/accounts/login/')
 def show_category(request, category_slug):
+    print('im here')
     try:
         category = Category.objects.get(slug=category_slug)
         tasks = Task.objects.filter(category=category)
@@ -259,11 +260,14 @@ def show_category(request, category_slug):
         category = Category.objects.none()
         tasks = Task.objects.none()
 
-    #Logic to check if user has liked this page
+    # Logic to check if user has liked this page
     try:
         liked_category = LikedCategory.objects.filter(user=request.user, category=category)
     except LikedCategory.DoesNotExist:
-        liked_category = LikedCategory.objects.none()
+        liked_category = None
+
+    count_of_like = LikedCategory.objects.filter(category=category).count()
+    category.likes = count_of_like
 
     context_dict = {
         'category': category,
@@ -274,19 +278,27 @@ def show_category(request, category_slug):
 
 
 @login_required(login_url='/accounts/login/')
-def like_category(request):
-    category_id = request.GET['category_id']
+def like_category(request, category_slug):
     try:
-        category = Category.objects.get(id=int(category_id))
+        category = Category.objects.get(slug=category_slug)
     except Category.DoesNotExist:
-        return redirect('ecopoints:dashboard')
-    except ValueError:
-        return redirect('ecopoints:dashboard')
-    category.likes = category.likes + 1
-    category.save()
-    # Create a LikedCategory record for the logged-in user
-    LikedCategory.objects.create(user=request.user, category=category)
-    return HttpResponse(category.likes)
+        return JsonResponse({'error': 'Category not found'}, status=404)
+
+    if request.method == 'POST':
+        # Like the category
+        LikedCategory.objects.get_or_create(user=request.user, category=category)
+
+
+    elif request.method == 'DELETE':
+        # Unlike the category
+        LikedCategory.objects.filter(user=request.user, category=category).delete()
+
+
+    else:
+        return JsonResponse({'error': 'Invalid method'}, status=400)
+
+    like_count = LikedCategory.objects.filter(category=category).count()
+    return HttpResponse(like_count)
 
 
 @login_required(login_url='/accounts/login/')
@@ -305,26 +317,3 @@ def complete_task(request, task_id):
     else:
         # If someone navigates here with GET, just redirect to dashboard
         return redirect('ecopoints:dashboard')
-
-
-'''@login_required(login_url='/accounts/login/')
-def register_profile(request):
-    form = UserProfileForm()
-
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            user_profile = form.save(commit=False)
-            user_profile.user = request.user
-            user_profile.save()
-
-            return redirect(reverse('ecopoints:index'))
-    else:
-        print(form.errors)
-    context_dict = {'form': form}
-    return render(request, 'ecopoints/profile_registration.html', context_dict)'''
-
-
-
-
