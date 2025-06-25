@@ -1,6 +1,7 @@
 # 🌱 ecopoints
 
 ****
+IMPORTANT - Original commits were made under a local-only Git identity, so GitHub does not attribute them to my account. This repository is a copy to showcase my work.
 
 ## What is in environment
 
